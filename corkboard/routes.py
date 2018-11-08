@@ -18,20 +18,22 @@ def home():
 @app.route("/")
 @app.route("/home_screen")
 def home_screen():
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
     show_recent = """
     (SELECT CorkBoard.corkBoardID, CorkBoard.email, CorkBoard.cat_name, CorkBoard.title, CorkBoard.last_update, PrivateCorkboard.password, User.name
     FROM Follow, CorkBoard, PrivateCorkboard, User
-    WHERE Follow.email= 'user3@123.com' AND Follow.owner_email=CorkBoard.email and PrivateCorkboard.corkBoardID=Corkboard.corkBoardID and User.email= Follow.owner_email
+    WHERE Follow.email= '""" + current_user.email + """' AND Follow.owner_email=CorkBoard.email and PrivateCorkboard.corkBoardID=Corkboard.corkBoardID and User.email= Follow.owner_email
     ORDER BY CorkBoard.last_update DESC LIMIT 4)
     UNION
     (SELECT CorkBoard.corkBoardID, CorkBoard.email, CorkBoard.cat_name, CorkBoard.title, CorkBoard.last_update, NULL as password, User.name
     FROM Follow, CorkBoard, PublicCorkboard, User
-    WHERE Follow.email= 'user3@123.com' AND Follow.owner_email=CorkBoard.email and PublicCorkboard.corkBoardID=Corkboard.corkBoardID and User.email= Follow.owner_email
+    WHERE Follow.email= '""" + current_user.email + """' AND Follow.owner_email=CorkBoard.email and PublicCorkboard.corkBoardID=Corkboard.corkBoardID and User.email= Follow.owner_email
     ORDER BY CorkBoard.last_update DESC LIMIT 4)
     UNION
     (SELECT CorkBoard.corkBoardID,corkBoard.email, CorkBoard.cat_name, CorkBoard.title, CorkBoard.last_update, NULL as password, User.name
     FROM Watch, corkBoard, User
-    WHERE Watch.email='user3@123.com' and Watch.corkBoardID = corkBoard.corkBoardID and User.email= corkBoard.email
+    WHERE Watch.email='""" + current_user.email + """' and Watch.corkBoardID = corkBoard.corkBoardID and User.email= corkBoard.email
     ORDER BY CorkBoard.last_update DESC LIMIT 4);
     """
     # sql = text(show_recent.replace("\n", ""))
@@ -44,13 +46,13 @@ def home_screen():
     show_my_info = """
     (SELECT CorkBoard.title, COUNT(PushPin.pushPinID), NULL as password
     FROM PublicCorkBoard, corkBoard, PushPin
-    WHERE CorkBoard.email = 'user3@123.com'  and corkBoard.corkBoardID = PublicCorkBoard.corkBoardID and pushPin.corkBoardID=corkBoard.corkBoardID
+    WHERE CorkBoard.email = '""" + current_user.email + """'  and corkBoard.corkBoardID = PublicCorkBoard.corkBoardID and pushPin.corkBoardID=corkBoard.corkBoardID
     GROUP By pushPin.corkBoardID
     ORDER BY corkBoard.title LIMIT 3)
     UNION
     (SELECT CorkBoard.title, COUNT(PushPin.pushPinID), PrivateCorkboard.password
     FROM PrivateCorkBoard, corkBoard, PushPin
-    WHERE CorkBoard.email = 'user3@123.com' and corkBoard.corkBoardID = PrivateCorkBoard.corkBoardID and pushPin.corkBoardID=corkBoard.corkBoardID
+    WHERE CorkBoard.email = '""" + current_user.email + """' and corkBoard.corkBoardID = PrivateCorkBoard.corkBoardID and pushPin.corkBoardID=corkBoard.corkBoardID
     GROUP By pushPin.corkBoardID
     ORDER BY corkBoard.title LIMIT 3);
     """
