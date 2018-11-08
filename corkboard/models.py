@@ -21,6 +21,9 @@ def load_user(user_id):
 
 
 class user(db.Model, UserMixin):
+    def get_id(self):
+        return (self.userID)
+
     userID = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(250), unique=True, nullable=False)
     pin = db.Column(db.String(60), nullable=False)
