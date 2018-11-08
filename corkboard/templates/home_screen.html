@@ -10,7 +10,11 @@
         
         {% for recent in recent_info %}
         <div class="content-section">
-            <h4 class="border-bottom recent-item mb-5">{{recent.title}}</h1>
+            <h4 class="border-bottom recent-item mb-5">{{recent.title}}
+            {% if recent.password != None %}
+                (Private)
+            {% endif %}
+            </h4>
             <p class="text-secondary"> Updated by {{recent.name}} on {{recent.last_update}}</p>
             
         </div>

@@ -21,17 +21,17 @@ def home_screen():
     show_recent = """
     (SELECT CorkBoard.corkBoardID, CorkBoard.email, CorkBoard.cat_name, CorkBoard.title, CorkBoard.last_update, PrivateCorkboard.password, User.name
     FROM Follow, CorkBoard, PrivateCorkboard, User
-    WHERE Follow.email= 'user3@123.com' AND Follow.owner_email=CorkBoard.email and PrivateCorkboard.corkBoardID=Corkboard.corkBoardID and User.email= Follow.email
+    WHERE Follow.email= 'user3@123.com' AND Follow.owner_email=CorkBoard.email and PrivateCorkboard.corkBoardID=Corkboard.corkBoardID and User.email= Follow.owner_email
     ORDER BY CorkBoard.last_update DESC LIMIT 4)
     UNION
     (SELECT CorkBoard.corkBoardID, CorkBoard.email, CorkBoard.cat_name, CorkBoard.title, CorkBoard.last_update, NULL as password, User.name
     FROM Follow, CorkBoard, PublicCorkboard, User
-    WHERE Follow.email= 'user3@123.com' AND Follow.owner_email=CorkBoard.email and PublicCorkboard.corkBoardID=Corkboard.corkBoardID and User.email= Follow.email
+    WHERE Follow.email= 'user3@123.com' AND Follow.owner_email=CorkBoard.email and PublicCorkboard.corkBoardID=Corkboard.corkBoardID and User.email= Follow.owner_email
     ORDER BY CorkBoard.last_update DESC LIMIT 4)
     UNION
     (SELECT CorkBoard.corkBoardID,corkBoard.email, CorkBoard.cat_name, CorkBoard.title, CorkBoard.last_update, NULL as password, User.name
     FROM Watch, corkBoard, User
-    WHERE Watch.email='user3@123.com' and Watch.corkBoardID = corkBoard.corkBoardID and User.email= Watch.email
+    WHERE Watch.email='user3@123.com' and Watch.corkBoardID = corkBoard.corkBoardID and User.email= corkBoard.email
     ORDER BY CorkBoard.last_update DESC LIMIT 4);
     """
     # sql = text(show_recent.replace("\n", ""))
