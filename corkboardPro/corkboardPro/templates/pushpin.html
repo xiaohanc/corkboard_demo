@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1 class="border-bottom mb-5">{{corkboard.title}} of {{ corkboard.email}}</h1>
+    <div class="content-section">
+        <div class="media">
+          <div class="media-body">
+            <h2 class="homepage-heading"> {{pushpin.image_URL}}</h2>
+
+          </div>
+        </div>
+
+        <div class="content-section">
+            <h4  class="border-bottom recent-item mb-5"> {{corkboard.title}} </a>
+
+            </h4>
+            <p class="text-secondary"> Updated by {{current_user.name}} on {{pushpin.pinned_time}}</p>
+
+        </div>
+
+    </div>
+{% endblock content %}
