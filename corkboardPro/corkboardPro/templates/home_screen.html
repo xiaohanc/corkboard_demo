@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1 class="border-bottom mb-5">Home Page for {{ current_user.name }}</h1>
+    <div class="content-section">
+        <div class="media">
+          <div class="media-body">
+            <h2 class="homepage-heading">Recent CorkBoad Updates</h2>
+          </div>
+        </div>
+
+        {% for recent in recent_info %}
+        <div class="content-section">
+            <h4  class="border-bottom recent-item mb-5"> <a href="{{ url_for('corkboards', corkboard_id=recent.corkBoardID) }}"> {{recent.title}} </a>
+            {% if recent.password != None %}
+                (Private)
+            {% endif %}
+            </h4>
+            <p class="text-secondary"> Updated by {{recent.name}} on {{recent.last_update}}</p>
+
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="content-section">
+        <div class="media">
+          <div class="media-body">
+            <h2 class="homepage-heading">My CorkBoad Updates {{my_corkboard}}</h2>
+          </div>
+        </div>
+
+        {% for my_corkboard in my_info %}
+            <div class="content-section">
+                <h4 class="border-bottom recent-item"> <a href="{{ url_for('corkboards', corkboard_id=my_corkboard.corkBoardID) }}">{{my_corkboard.title}}</a>
+                {% if my_corkboard.password != None %}
+                    (Private)
+                {% endif %}
+                with {{my_corkboard[1]}} PushPins
+            </h4>
+            </div>
+        {% endfor %}
+
+    </div>
+{% endblock content %}
