@@ -2,3 +2,4 @@
 .DS_Store
 blog.sql
 ./corkboardPro/corkboardPro/__pycache__/*.pyc
+./corkboardPro/__pycache__/*.pyc

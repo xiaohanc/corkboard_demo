@@ -1,2 +1,2 @@
-from corkboard import db 
+from corkboardPro import db
 db.create_all()
