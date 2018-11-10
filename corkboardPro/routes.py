@@ -212,21 +212,21 @@ def popular_tags():
     return render_template('popular_tags.html')
 
 
-@app.route("/search?q=<string:search_item>")
+@app.route("/search/<string:search_item>")
 @login_required
 def search_result(search_item):
     search_query = """
     SELECT pushPin.pushPinID, pushPin.Description, pushPin.Image_URL, corkBoard.Title, User.name 
     FROM PushPin, CorkBoard, User 
-    WHERE CorkBoard.cat_name LIKE '%$""" + search_item + """%' and PushPin.corkBoardID = CorkBoard.corkBoardID and CorkBoard.email = User.email
+    WHERE CorkBoard.cat_name LIKE '%""" + search_item + """%' and PushPin.corkBoardID = CorkBoard.corkBoardID and CorkBoard.email = User.email
     Union 
     SELECT pushPin.pushPinID, PushPin.Description, PushPin.Image_URL, CorkBoard.Title, User.name 
     FROM PushPin, CorkBoard, User 
-    WHERE PushPin.description LIKE '%$""" + search_item + """%' and PushPin.corkBoardID = CorkBoard.corkBoardID and CorkBoard.email = User.email
+    WHERE PushPin.description LIKE '%""" + search_item + """%' and PushPin.corkBoardID = CorkBoard.corkBoardID and CorkBoard.email = User.email
     Union
     SELECT pushPin.pushPinID, PushPin.Description, PushPin.Image_URL, CorkBoard.Title, User.name 
-    FROM PushPin, CorkBoard, User 
-    WHERE PushPin.description LIKE '%$""" + search_item + """%' and PushPin.corkBoardID = CorkBoard.corkBoardID and CorkBoard.email = User.email
+    FROM Tag, PushPin, CorkBoard, User 
+    WHERE Tag.tag LIKE '%""" + search_item + """%' and Tag.pushPinID = PushPin.pushPinID and PushPin.corkBoardID = CorkBoard.corkBoardID and CorkBoard.email = User.email
     """
     sql1 = text(search_query)
     result1 = db.engine.execute(sql1)
