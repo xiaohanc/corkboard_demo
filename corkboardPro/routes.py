@@ -206,10 +206,23 @@ def user_posts(username):
     return render_template('user_posts.html', posts=posts, user=user)
 
 
-@app.route("/populartags", methods=['GET', 'POST'])
+@app.route("/populartags")
 @login_required
 def popular_tags():
-    return render_template('popular_tags.html')
+    popular_query = """
+    SELECT  Tag.tag, COUNT(Tag.pushPinID) AS PushPins, COUNT(DISTINCT PushPin.corkBoardID) AS Unique_CorkBoards
+    FROM Tag INNER JOIN PushPin
+    ON Tag.pushPinID=PushPin.pushPinID
+    GROUP BY Tag.Tag
+    ORDER BY PushPins DESC
+    LIMIT 5;
+    """
+    sql1 = text(popular_query)
+    result1 = db.engine.execute(sql1)
+    tags = []
+    for row in result1:
+        tags.append(row)
+    return render_template('popular_tags.html', tags=tags)
 
 
 @app.route("/search")
