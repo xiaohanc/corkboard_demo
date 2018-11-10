@@ -64,14 +64,16 @@
             <p class='text-muted'>You can put any information here you'd like.
               <ul class="list-group">
                 <li class="list-group-item list-group-item-light">
-                    <a class="nav-link" href="{{ url_for('account') }}">Popular Tags</a>
+                    <a class="nav-link" href="{{ url_for('popular_tags') }}">Popular Tags</a>
                 </li>
                 <li class="list-group-item list-group-item-light">
                     <a class="nav-link" href="{{ url_for('new_corkboard') }}">Add CorkBoard</a>
                 </li>
                 <li class="list-group-item list-group-item-light">
-                    <input id="search" placeholder="PushPin Search..." value="">
-                    <button href="{{ url_for('account') }}" style="float: right">Search</button>
+                    <form action="{{ url_for('search', search_item=search_item)}}">
+                        <input name="search_item" placeholder="PushPin Search..." value="">
+                        <button style="float: right">Search</button>
+                    </form>
                 </li>
               </ul>
             </p>
