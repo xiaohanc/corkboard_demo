@@ -291,6 +291,14 @@ def new_pushpin():
         tag1 = tag(pushPinID= pushpin1.pushPinID, tag= form.tags)
         db.session.add(pushpin1)
         db.session.commit()
+        
+        update_corkboard_time = """
+        UPDATE CorkBoard
+        SET last_update = NOW()
+        WHERE corkBoardID = """ + corkboard_ID + """;
+        """
+        last_update_sql = text(update_corkboard_time)
+        db.engine.execute(last_update_sql)
 
         flash('Your PushPin has been created!', 'success')
         return redirect( url_for('corkboards', corkboard_id=corkboard_ID))
