@@ -212,6 +212,13 @@ def popular_tags():
     return render_template('popular_tags.html')
 
 
+@app.route("/search")
+@login_required
+def search():
+    search_item = request.args['search_item']
+    return redirect(url_for('search_result', search_item=search_item))
+
+
 @app.route("/search/<string:search_item>")
 @login_required
 def search_result(search_item):

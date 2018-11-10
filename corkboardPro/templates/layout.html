@@ -70,8 +70,10 @@
                     <a class="nav-link" href="{{ url_for('new_corkboard') }}">Add CorkBoard</a>
                 </li>
                 <li class="list-group-item list-group-item-light">
-                    <input id="search" placeholder="PushPin Search..." value="">
-                    <button href="{{ url_for('account') }}" style="float: right">Search</button>
+                    <form action="{{ url_for('search', search_item=search_item)}}">
+                        <input name="search_item" placeholder="PushPin Search..." value="">
+                        <button style="float: right">Search</button>
+                    </form>
                 </li>
               </ul>
             </p>
