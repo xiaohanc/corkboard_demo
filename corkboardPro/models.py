@@ -85,3 +85,27 @@ class tag(db.Model):
     tagID = db.Column(db.Integer, primary_key=True)
     pushPinID=  db.Column(db.Integer, db.ForeignKey('pushpin.pushPinID'), nullable=False)
     tag = db.Column(db.String(250), nullable=False)
+
+class follow(db.Model):
+    followID = db.Column(db.Integer, primary_key=True)
+    email=  db.Column(db.String(250), nullable=False)
+    owner_email = db.Column(db.String(250), nullable=False)
+
+class watch(db.Model):
+    WatchID = db.Column(db.Integer, primary_key=True)
+    email=  db.Column(db.String(250), nullable=False)
+    corkBoardID= db.Column(db.Integer, db.ForeignKey('corkboard.corkBoardID'), nullable=False)
+
+
+class likes(db.Model):
+    LikesID = db.Column(db.Integer, primary_key=True)
+    email=  db.Column(db.String(250), db.ForeignKey('user.email'), nullable=False)
+    pushPinID= db.Column(db.Integer, db.ForeignKey('pushpin.pushPinID'), nullable=False)
+
+
+class comment(db.Model):
+    commentID = db.Column(db.Integer, primary_key=True)
+    email=  db.Column(db.String(250), db.ForeignKey('user.email'), nullable=False)
+    content= db.Column(db.String(250), nullable=True)
+    pushPinID= db.Column(db.Integer, db.ForeignKey('pushpin.pushPinID'), nullable=False)
+    added_time = db.Column(db.DateTime, nullable=True)

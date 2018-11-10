@@ -10,11 +10,13 @@
 
         {% for recent in recent_info %}
         <div class="content-section">
-            <h4  class="border-bottom recent-item mb-5"> <a href="{{ url_for('corkboards', corkboard_id=recent.corkBoardID) }}"> {{recent.title}} </a>
             {% if recent.password != None %}
-                (Private)
+
+            <h4  class="border-bottom recent-item mb-1"> <a href="{{ url_for('privatelogin', corkboard_id=recent.corkBoardID) }}"> {{recent.title}}  </a>  (Private)</h4>
+
+            {% else %}
+            <h4  class="border-bottom recent-item mb-1"> <a href="{{ url_for('corkboards', corkboard_id=recent.corkBoardID) }}"> {{recent.title}} </a> </h4>
             {% endif %}
-            </h4>
             <p class="text-secondary"> Updated by {{recent.name}} on {{recent.last_update}}</p>
 
         </div>
@@ -30,9 +32,11 @@
 
         {% for my_corkboard in my_info %}
             <div class="content-section">
-                <h4 class="border-bottom recent-item"> <a href="{{ url_for('corkboards', corkboard_id=my_corkboard.corkBoardID) }}">{{my_corkboard.title}}</a>
                 {% if my_corkboard.password != None %}
+                    <h4 class="border-bottom recent-item"> <a href="{{ url_for('corkboards', corkboard_id=my_corkboard.corkBoardID) }}">{{my_corkboard.title}}</a> </h4>
                     (Private)
+                {% else%}
+                    <h4 class="border-bottom recent-item"> <a href="{{ url_for('corkboards', corkboard_id=my_corkboard.corkBoardID) }}">{{my_corkboard.title}}</a> </h4>
                 {% endif %}
                 with {{my_corkboard[1]}} PushPins
             </h4>

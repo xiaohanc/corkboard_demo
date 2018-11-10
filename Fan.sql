@@ -58,7 +58,7 @@ CREATE TABLE `comment` (
   KEY `fk_Comment_pushPinID_PushPin_pushPinID` (`pushPinID`),
   CONSTRAINT `fk_Comment_email_User_email` FOREIGN KEY (`email`) REFERENCES `user` (`email`),
   CONSTRAINT `fk_Comment_pushPinID_PushPin_pushPinID` FOREIGN KEY (`pushPinID`) REFERENCES `pushpin` (`pushpinid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -67,7 +67,7 @@ CREATE TABLE `comment` (
 
 LOCK TABLES `comment` WRITE;
 /*!40000 ALTER TABLE `comment` DISABLE KEYS */;
-INSERT INTO `comment` VALUES (1,'user1@123.com','2018-10-13 00:00:00','hahaha',2),(2,'user2@123.com','2018-10-14 00:00:00','lueluelue',2),(3,'user1@123.com','2018-10-08 00:00:00','hehehe',3);
+INSERT INTO `comment` VALUES (1,'user1@123.com','2018-10-13 00:00:00','hahaha',2),(2,'user2@123.com','2018-10-14 00:00:00','lueluelue',2),(3,'user1@123.com','2018-10-08 00:00:00','hehehe',3),(4,'user1@123.com','2018-10-13 00:00:00','hahaha',1),(6,'user2@123.com','2018-10-14 00:00:00','lueluelue',1),(7,'user1@123.com','2018-10-08 00:00:00','hehehe',1),(8,'user3@123.com','2018-11-10 23:14:11','123321',1),(9,'user3@123.com','2018-11-10 23:14:17','123321',1),(10,'user3@123.com','2018-11-10 23:15:20','324122',1),(11,'user3@123.com','2018-11-10 23:15:23','3454',1);
 /*!40000 ALTER TABLE `comment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -119,7 +119,7 @@ CREATE TABLE `follow` (
   KEY `fk_Follow_owner_email_User_email` (`owner_email`),
   CONSTRAINT `fk_Follow_email_User_email` FOREIGN KEY (`email`) REFERENCES `user` (`email`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Follow_owner_email_User_email` FOREIGN KEY (`owner_email`) REFERENCES `user` (`email`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -128,7 +128,7 @@ CREATE TABLE `follow` (
 
 LOCK TABLES `follow` WRITE;
 /*!40000 ALTER TABLE `follow` DISABLE KEYS */;
-INSERT INTO `follow` VALUES (1,'user1@123.com','user2@123.com'),(2,'user3@123.com','user1@123.com'),(3,'user3@123.com','user2@123.com');
+INSERT INTO `follow` VALUES (1,'user1@123.com','user2@123.com'),(2,'user3@123.com','user1@123.com'),(3,'user3@123.com','user2@123.com'),(6,'user3@123.com','user4@123.com');
 /*!40000 ALTER TABLE `follow` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -148,7 +148,7 @@ CREATE TABLE `likes` (
   KEY `fk_Likes_pushPinID_PushPin_pushPinID` (`pushPinID`),
   CONSTRAINT `fk_Likes_email_User_email` FOREIGN KEY (`email`) REFERENCES `user` (`email`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Likes_pushPinID_PushPin_pushPinID` FOREIGN KEY (`pushPinID`) REFERENCES `pushpin` (`pushpinid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -157,7 +157,7 @@ CREATE TABLE `likes` (
 
 LOCK TABLES `likes` WRITE;
 /*!40000 ALTER TABLE `likes` DISABLE KEYS */;
-INSERT INTO `likes` VALUES (1,'user1@123.com',3),(2,'user2@123.com',2),(3,'user1@123.com',5),(4,'user4@123.com',6);
+INSERT INTO `likes` VALUES (1,'user1@123.com',3),(2,'user2@123.com',2),(3,'user1@123.com',5),(4,'user4@123.com',6),(5,'user3@123.com',5),(6,'user3@123.com',1);
 /*!40000 ALTER TABLE `likes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -226,8 +226,8 @@ CREATE TABLE `pushpin` (
   `description` varchar(250) DEFAULT NULL,
   `pinned_time` datetime NOT NULL,
   PRIMARY KEY (`pushPinID`),
-  UNIQUE KEY `image_URL` (`image_URL`),
   KEY `fk_PushPin_corkBoardID_CorkBoard_corkBoardID` (`corkBoardID`),
+  KEY `image_URL` (`image_URL`) USING BTREE,
   CONSTRAINT `fk_PushPin_corkBoardID_CorkBoard_corkBoardID` FOREIGN KEY (`corkBoardID`) REFERENCES `corkboard` (`corkBoardID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -238,7 +238,7 @@ CREATE TABLE `pushpin` (
 
 LOCK TABLES `pushpin` WRITE;
 /*!40000 ALTER TABLE `pushpin` DISABLE KEYS */;
-INSERT INTO `pushpin` VALUES (1,1,'image_1_1','first image','2018-10-13 00:00:00'),(2,1,'image_1_2','first image','2018-10-17 00:00:00'),(3,2,'pimage_2_3','ppp first image','2018-10-05 00:00:00'),(4,2,'pimage_2_4','ppp first image','2018-10-31 00:00:00'),(5,3,'image_3_5','asdf','2018-10-14 00:00:00'),(6,4,'image_4_6','asdf','2018-10-02 00:00:00'),(7,5,'image_5_7','gfg','2018-10-25 00:00:00'),(8,6,'image_6_8','sdfg','2018-10-08 00:00:00'),(9,3,'image_URL_test','test1','2018-11-09 02:55:43'),(11,3,'image_URL_test22','test1','2018-11-09 02:56:56');
+INSERT INTO `pushpin` VALUES (1,1,'1.jpg','first image','2018-10-13 00:00:00'),(2,1,'2.jpg','first image','2018-10-17 00:00:00'),(3,2,'3.jpg','ppp first image','2018-10-05 00:00:00'),(4,2,'1.jpg','ppp first image','2018-10-31 00:00:00'),(5,3,'2.jpg','asdf','2018-10-14 00:00:00'),(6,4,'3.jpg','asdf','2018-10-02 00:00:00'),(7,5,'1.jpg','gfg','2018-10-25 00:00:00'),(8,6,'2.jpg','sdfg','2018-10-08 00:00:00'),(9,3,'3.jpg','test1','2018-11-09 02:55:43'),(11,3,'1.jpg','test1','2018-11-09 02:56:56');
 /*!40000 ALTER TABLE `pushpin` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -312,7 +312,7 @@ CREATE TABLE `watch` (
   KEY `fk_Watch_corkBoardID_CorkBoard_corkBoardID` (`corkBoardID`),
   CONSTRAINT `fk_Watch_corkBoardID_CorkBoard_corkBoardID` FOREIGN KEY (`corkBoardID`) REFERENCES `corkboard` (`corkBoardID`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Watch_email_User_email` FOREIGN KEY (`email`) REFERENCES `user` (`email`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -321,7 +321,7 @@ CREATE TABLE `watch` (
 
 LOCK TABLES `watch` WRITE;
 /*!40000 ALTER TABLE `watch` DISABLE KEYS */;
-INSERT INTO `watch` VALUES (1,'user2@123.com',1),(2,'user3@123.com',1),(3,'user3@123.com',6);
+INSERT INTO `watch` VALUES (4,'user3@123.com',6),(5,'user3@123.com',1);
 /*!40000 ALTER TABLE `watch` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -334,4 +334,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-11-08 23:35:37
+-- Dump completed on 2018-11-10 18:54:44

@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1 class="border-bottom mb-5">{{corkboard.title}} of {{ corkboard.email}}</h1>
+    <h1 class="border-bottom mb-5">{{corkboard.title}} of {{ owner.name}}</h1>
     <div class="content-section">
         <div class="media">
           <div class="media-body">
-            <h2 class="homepage-heading"> {{corkboard.title}}</h2>
+            <h2 class="homepage-heading"> {{corkboard.title}} <a  href="{{ url_for('_follow',corkboard_id1= corkboard.corkBoardID) }}""> <button type="button" class="btn btn-primary">follow</button> </a> </h2>
             {% if current_user.email== corkboard.email %}
                 <a class="nav-item nav-link" href="{{ url_for('new_pushpin') }}">Add Pushpin </a>
             {% endif %}
@@ -22,11 +22,21 @@
         <div class="content-section">
             {% for pushpin in pushpins %}
             <div class="content-section">
-                <h4 class="border-bottom recent-item"> <a href="#">{{pushpin.image_URL}}</a>
+                <h4 class="border-bottom recent-item"> <a href="{{ url_for('pushpins',pushpin_id= pushpin.pushPinID) }}">{{pushpin.image_URL}}</a>
             </h4>
             </div>
         {% endfor %}
 
+        </div>
+        <div class="media">
+          <div class="media-body">
+                 <h6> This CorkBoard has  watchers
+                        {% if current_user.email!= corkboard.email and isPrivate==False %}
+                            <a  href="{{ url_for('_watch',corkboard_id1= corkboard.corkBoardID) }}"> <button type="button" class="btn btn-primary">watch</button> </a> </h6>
+                        {% endif %}
+
+
+          </div>
         </div>
 
     </div>
