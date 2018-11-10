@@ -1,21 +1,24 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1 class="border-bottom mb-5">{{corkboard.title}} of {{ corkboard.email}}</h1>
+    <h1 class="border-bottom mb-5">{{corkboard.title}} of {{corkboard.email}}</h1>
     <div class="content-section">
-        <div class="media">
-          <div class="media-body">
-            <h2 class="homepage-heading"> {{pushpin.image_URL}}</h2>
 
-          </div>
-        </div>
 
         <div class="content-section">
             <h4  class="border-bottom recent-item mb-5"> {{corkboard.title}} </a>
-
+                <h2 class="homepage-heading"> {{corkboard.title}} <a  href="{{ url_for('_follow',corkboard_id1= corkboard.corkBoardID) }}""> <button type="button" class="btn btn-primary">follow</button> </a> </h2>
             </h4>
             <p class="text-secondary"> Updated by {{current_user.name}} on {{pushpin.pinned_time}}</p>
 
         </div>
+
+        <div class="media">
+          <div class="media-body">
+            <h2 class="homepage-heading"> {{pushpin.image_URL}}</h2>
+            <img class="img-fluid" src="{{ url_for('static', filename='profile_pics/' + pushpin.image_URL) }}">
+          </div>
+        </div>
+
         <div class="media">
           <div class="media-body">
                  <h6> This CorkBoard has  likes
@@ -26,6 +29,7 @@
         </div>
 
         <form method="POST" action="">
+            {{ form.hidden_tag() }}
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">{{ legend }}</legend>
                 <div class="form-group">
@@ -46,10 +50,11 @@
                     {% for c in comments %}
 
                                 <p class="article-content">{{ c.content }}</p>
-
                     {% endfor %}
+
+
                     <div class="form-group">
-                    {{ form.submit(class="btn btn-outline-info") }}
+                    {{ form.submit(class="btn btn-outline-info")  }}
                      </div>
 
                 </div>

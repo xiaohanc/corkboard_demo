@@ -280,12 +280,10 @@ def pushpins(pushpin_id):
     # will stop
     form= CommentForm()
     if form.validate_on_submit():
-        pdb.set_trace()
         comment1= comment(email=current_user.email, content= form.content.data, pushPinID= pushpin_id, added_time= datetime.utcnow())
         db.session.add(comment1)
         db.session.commit()
-
-        # return redirect( url_for('pushpins', pushpin_id=pushpin_id))
+        return redirect( url_for('pushpins', pushpin_id=pushpin_id))
     return render_template('pushpin.html', title=corkboard1.title, corkboard= corkboard1, pushpin=pushpin1, comments=comments, form=form)
 
 

@@ -88,7 +88,6 @@ class PushPinForm(FlaskForm):
     submit = SubmitField('Add')
 
 class CommentForm(FlaskForm):
-    content = StringField('content')
+    content = StringField('Content', validators=[DataRequired()])
     submit = SubmitField('Post Comment')
-
 
