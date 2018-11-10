@@ -85,3 +85,8 @@ class tag(db.Model):
     tagID = db.Column(db.Integer, primary_key=True)
     pushPinID=  db.Column(db.Integer, db.ForeignKey('pushpin.pushPinID'), nullable=False)
     tag = db.Column(db.String(250), nullable=False)
+
+class follow(db.Model):
+    followID = db.Column(db.Integer, primary_key=True)
+    email=  db.Column(db.String(250), nullable=False)
+    owner_email = db.Column(db.String(250), nullable=False)
