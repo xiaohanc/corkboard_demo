@@ -34,6 +34,10 @@ class LoginForm(FlaskForm):
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
 
+class PrivateLoginForm(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired()])
+    submit = SubmitField('Login')
+
 
 class UpdateAccountForm(FlaskForm):
     username = StringField('Username',
@@ -82,6 +86,7 @@ class PushPinForm(FlaskForm):
     description = TextAreaField('descritption', validators=[DataRequired()])
     tags = StringField('tags', validators=[DataRequired()])
     submit = SubmitField('Add')
+
 
 
 

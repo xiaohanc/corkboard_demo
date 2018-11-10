@@ -4,8 +4,8 @@ import secrets
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort, session
 from corkboardPro import app, db, bcrypt
-from corkboardPro.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, CorkBoardForm, PushPinForm
-from corkboardPro.models import user, Post, corkboard, privatecorkboard, publiccorkboard, pushpin,tag
+from corkboardPro.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, CorkBoardForm, PushPinForm, PrivateLoginForm
+from corkboardPro.models import user, Post, corkboard, privatecorkboard, publiccorkboard, pushpin,tag, follow
 from flask_login import login_user, current_user, logout_user, login_required
 from sqlalchemy import text
 from datetime import datetime
@@ -99,6 +99,8 @@ def login():
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Login', form=form)
+
+
 
 
 @app.route("/logout")
@@ -304,3 +306,27 @@ def pushpins(pushpin_id):
     # pdb.set_trace()
 
     return render_template('pushpin.html', title=corkboard1.title, corkboard= corkboard1, pushpin=pushpin1)
+
+
+@app.route("/Privatelogin/<int:corkboard_id>", methods=['GET', 'POST'])
+def privatelogin(corkboard_id):
+    form = PrivateLoginForm()
+    if form.validate_on_submit():
+        corkboard1 = privatecorkboard.query.get_or_404(corkboard_id)
+        if corkboard1.password == form.password.data:
+            return redirect(url_for('corkboards', corkboard_id=corkboard1.corkBoardID))
+        else:
+            flash('Login Unsuccessful. Please check password', 'danger')
+    return render_template('private_login.html', form=form)
+    # return redirect(url_for('corkboards', corkboard_id=corkboard1.corkBoardID))
+
+@app.route("/follow/<string:owner_id>")
+@login_required
+def _follow(owner_id):
+
+    follow1= follow.query.filter_by(email=current_user.email, owner_email=owner_id).first()
+    pdb.set_trace()
+    if not follow1:
+        follow1= follow(email=current_user.email, owner_email=owner_id)
+        db.session.add(follow1)
+        db.session.commit()
