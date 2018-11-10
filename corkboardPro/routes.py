@@ -240,6 +240,8 @@ def search_result(search_item):
     pushpins = []
     for row in result1:
         pushpins.append(row)
+
+    # [(1, 'first image', 'image_1_1', 'user1-cork1', 'user1')]
     return render_template('search_results.html', search_item= search_item, pushpins = pushpins)
 
 

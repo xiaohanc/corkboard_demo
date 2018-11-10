@@ -1,11 +1,24 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1 class="border-bottom mb-5">Home Page for {{ current_user.name }}</h1>
+    <h1 class="border-bottom mb-5">PushPin Search Results for {{ search_item }}</h1>
     <div class="content-section">
         <div class="media">
           <div class="media-body">
-            <h2 class="homepage-heading">Recent CorkBoad Updates</h2>
+            <h2 class="homepage-heading">PushPin Search Results</h2>
           </div>
         </div>
+    </div>
+    
+    <div class="content-section">
+        <p>
+            <strong><u>PushPin Description</u></strong>
+            <u><strong>CorkBoard</strong></u>
+            <u><strong>Owner</strong></u> 
+        </p>
+        {% for pushpin in pushpins %}
+            <br>
+            <a href="{{ url_for('pushpins',pushpin_id= pushpin.pushPinID) }}"><strong><u>{{pushpin.Description}}</u></strong></a>
+                &nbsp&nbsp&nbsp&nbsp&nbsp   {{pushpin.Title}}   &nbsp&nbsp&nbsp&nbsp&nbsp  {{pushpin.name}}
+        {% endfor %}
     </div>
 {% endblock content %}
