@@ -203,6 +203,37 @@ def user_posts(username):
         .paginate(page=page, per_page=5)
     return render_template('user_posts.html', posts=posts, user=user)
 
+
+@app.route("/populartags", methods=['GET', 'POST'])
+@login_required
+def popular_tags():
+    return render_template('popular_tags.html')
+
+
+@app.route("/search?q=<string:search_item>")
+@login_required
+def search_result(search_item):
+    search_query = """
+    SELECT pushPin.pushPinID, pushPin.Description, pushPin.Image_URL, corkBoard.Title, User.name 
+    FROM PushPin, CorkBoard, User 
+    WHERE CorkBoard.cat_name LIKE '%$""" + search_item + """%' and PushPin.corkBoardID = CorkBoard.corkBoardID and CorkBoard.email = User.email
+    Union 
+    SELECT pushPin.pushPinID, PushPin.Description, PushPin.Image_URL, CorkBoard.Title, User.name 
+    FROM PushPin, CorkBoard, User 
+    WHERE PushPin.description LIKE '%$""" + search_item + """%' and PushPin.corkBoardID = CorkBoard.corkBoardID and CorkBoard.email = User.email
+    Union
+    SELECT pushPin.pushPinID, PushPin.Description, PushPin.Image_URL, CorkBoard.Title, User.name 
+    FROM PushPin, CorkBoard, User 
+    WHERE PushPin.description LIKE '%$""" + search_item + """%' and PushPin.corkBoardID = CorkBoard.corkBoardID and CorkBoard.email = User.email
+    """
+    sql1 = text(search_query)
+    result1 = db.engine.execute(sql1)
+    pushpins = []
+    for row in result1:
+        pushpins.append(row)
+    return render_template('search_results.html', search_item= search_item, pushpins = pushpins)
+
+
 @app.route("/corkboard/new", methods=['GET', 'POST'])
 @login_required
 def new_corkboard():
