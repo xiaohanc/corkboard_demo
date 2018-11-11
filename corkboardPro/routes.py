@@ -45,15 +45,16 @@ def home_screen():
         recent_info.append(row)
 
     show_my_info = """
-    (SELECT CorkBoard.corkBoardID, CorkBoard.title, COUNT(PushPin.pushPinID), NULL as password
-    FROM PublicCorkBoard, corkBoard, PushPin
-    WHERE CorkBoard.email = '""" + current_user.email + """'  and corkBoard.corkBoardID = PublicCorkBoard.corkBoardID and pushPin.corkBoardID=corkBoard.corkBoardID
-    GROUP By pushPin.corkBoardID)
-    UNION
-    (SELECT CorkBoard.corkBoardID,CorkBoard.title, COUNT(PushPin.pushPinID), PrivateCorkboard.password
-    FROM PrivateCorkBoard, corkBoard, PushPin
-    WHERE CorkBoard.email = '""" + current_user.email + """' and corkBoard.corkBoardID = PrivateCorkBoard.corkBoardID and pushPin.corkBoardID=corkBoard.corkBoardID
-    GROUP By pushPin.corkBoardID);
+    SELECT t0.corkBoardID, t0.title, COUNT(*), t2.password FROM
+        (SELECT * FROM CorkBoard WHERE CorkBoard.email = '""" + current_user.email + """' ) t0
+        LEFT JOIN
+        (SELECT * FROM PublicCorkboard) t1 on t0.corkBoardID= t1.corkBoardID
+        LEFT JOIN
+        (SELECT * FROM PrivateCorkboard) t2 on t0.corkBoardID= t2.corkBoardID
+        LEFT JOIN
+        (SELECT * FROM pushpin) t3 on t0.corkBoardID= t3.corkBoardID
+        group by t0.corkBoardID
+        order by t0.last_update DESC
     """
     sql2 = text(show_my_info)
     result2 = db.engine.execute(sql2)
