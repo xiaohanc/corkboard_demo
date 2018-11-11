@@ -15,14 +15,17 @@
             <h4  class="border-bottom recent-item mb-5"> <a href="#"> {{corkboard.title}} </a>
 
             </h4>
-            <p class="text-secondary"> Updated by {{corkboard.cat_name}} on {{corkboard.last_update}}</p>
+            <p class="text-secondary"> Updated by {{corkboard.name}} on {{corkboard.last_update}}</p>
 
         </div>
 
         <div class="content-section">
             {% for pushpin in pushpins %}
             <div class="content-section">
-                <h4 class="border-bottom recent-item"> <a href="{{ url_for('pushpins',pushpin_id= pushpin.pushPinID) }}">{{pushpin.image_URL}}</a>
+            <!--     <h4 class="border-bottom recent-item"> <a href="{{ url_for('pushpins',pushpin_id= pushpin.pushPinID) }}">{{pushpin.image_URL}}</a> -->
+                <h4 class="border-bottom recent-item"> <a href="{{ url_for('pushpins',pushpin_id= pushpin.pushPinID) }}"> <img class="img-thumbnail" src="{{ url_for('static', filename='profile_pics/' + pushpin.image_URL) }}"></a>
+
+
             </h4>
             </div>
         {% endfor %}
