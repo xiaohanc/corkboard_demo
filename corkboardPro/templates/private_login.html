@@ -23,13 +23,11 @@
             </fieldset>
             <div class="form-group">
                 {{ form.submit(class="btn btn-outline-info") }}
+                <a  href="{{ url_for('home_screen') }}">
+                    <button style="float: right;" type="button" class="btn btn-outline-info">Cancel</button>
+                </a>
             </div>
 
         </form>
-    </div>
-    <div class="border-top pt-3">
-        <small class="text-muted">
-            Need An Account? <a class="ml-2" href="{{ url_for('register') }}">Sign Up Now</a>
-        </small>
     </div>
 {% endblock content %}
