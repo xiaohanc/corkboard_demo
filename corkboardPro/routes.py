@@ -246,16 +246,20 @@ def popularsites():
 @login_required
 def corkboardstatistics():
     corkboardstatistics = """
-    (SELECT name, Public_CorkBoards, Public_PushPins, IFNULL(null, 0) as Private_CorkBoards, IFNULL(null, 0) as Private_PushPins from
-        (SELECT User.name, Count(DISTINCT corkboard.CorkBoardID) AS Public_CorkBoards, Count(Pushpin.pushPinID ) AS Public_PushPins
-        FROM  (USER Inner JOIN (PublicCorkboard INNER JOIN Corkboard on PublicCorkboard.CorkboardID= Corkboard.CorkboardID) on User.email= Corkboard.email Inner Join PushPin on Corkboard.CorkboardID=PushPin.CorkboardID )
-        group by user.email) as a 
+    SELECT name, Public_CorkBoards, Public_PushPins, IFNULL(null, 0) as Private_CorkBoards, IFNULL(null, 0) as Private_PushPins from
+    (SELECT User.name, Count(DISTINCT corkboard.CorkBoardID) AS Public_CorkBoards, 
+    Count(Pushpin.pushPinID ) AS Public_PushPins
+    FROM  (USER Inner JOIN (PublicCorkboard INNER JOIN Corkboard on PublicCorkboard.CorkboardID= Corkboard.CorkboardID) 
+    on User.email= Corkboard.email Inner Join PushPin on Corkboard.CorkboardID=PushPin.CorkboardID )
+    group by user.email) as a 
     UNION ALL
     SELECT name, IFNULL(null, 0), IFNULL(null, 0), Private_CorkBoards, Private_PushPins from
-        (SELECT User.name, Count(DISTINCT corkboard.CorkBoardID) AS Private_CorkBoards, Count(Pushpin.pushPinID ) AS Private_PushPins
-        FROM  (USER Inner JOIN (PrivateCorkBoard INNER JOIN Corkboard on PrivateCorkBoard.CorkboardID= Corkboard.CorkboardID) on User.email= Corkboard.email Inner Join PushPin on Corkboard.CorkboardID=PushPin.CorkboardID )
-        group by user.email) as b
-    ORDER BY Public_CorkBoards DESC, Private_CorkBoards DESC);
+    (SELECT User.name, Count(DISTINCT corkboard.CorkBoardID) AS Private_CorkBoards, 
+    Count(Pushpin.pushPinID ) AS Private_PushPins
+    FROM  (USER Inner JOIN (PrivateCorkBoard INNER JOIN Corkboard on PrivateCorkBoard.CorkboardID= Corkboard.CorkboardID) 
+    on User.email= Corkboard.email Inner Join PushPin on Corkboard.CorkboardID=PushPin.CorkboardID )
+    group by user.email) as b
+    ORDER BY Public_CorkBoards DESC, Private_CorkBoards DESC;
     """
     sql1 = text(corkboardstatistics)
     result1 = db.engine.execute(sql1)
