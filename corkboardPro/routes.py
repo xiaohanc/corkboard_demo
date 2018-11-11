@@ -311,7 +311,7 @@ def search_result(search_item):
 def new_corkboard():
     form = CorkBoardForm()
     if form.validate_on_submit():
-        corkBoard1 = corkboard(email= current_user.email ,title=form.title.data, cat_name='cat1', last_update= None )
+        corkBoard1 = corkboard(email= current_user.email ,title=form.title.data, cat_name=form.category.data, last_update= None )
         db.session.add(corkBoard1)
         db.session.commit()
         if form.visibility.data=='Private':
