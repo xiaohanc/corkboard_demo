@@ -246,20 +246,21 @@ def popularsites():
 @login_required
 def corkboardstatistics():
     corkboardstatistics = """
-    SELECT name, Public_CorkBoards, Public_PushPins, IFNULL(null, 0) as Private_CorkBoards, IFNULL(null, 0) as Private_PushPins from
-    (SELECT User.name, Count(DISTINCT corkboard.CorkBoardID) AS Public_CorkBoards, 
-    Count(Pushpin.pushPinID ) AS Public_PushPins
-    FROM  (USER Inner JOIN (PublicCorkboard INNER JOIN Corkboard on PublicCorkboard.CorkboardID= Corkboard.CorkboardID) 
-    on User.email= Corkboard.email Inner Join PushPin on Corkboard.CorkboardID=PushPin.CorkboardID )
-    group by user.email) as a 
-    UNION ALL
-    SELECT name, IFNULL(null, 0), IFNULL(null, 0), Private_CorkBoards, Private_PushPins from
-    (SELECT User.name, Count(DISTINCT corkboard.CorkBoardID) AS Private_CorkBoards, 
-    Count(Pushpin.pushPinID ) AS Private_PushPins
-    FROM  (USER Inner JOIN (PrivateCorkBoard INNER JOIN Corkboard on PrivateCorkBoard.CorkboardID= Corkboard.CorkboardID) 
-    on User.email= Corkboard.email Inner Join PushPin on Corkboard.CorkboardID=PushPin.CorkboardID )
-    group by user.email) as b
-    ORDER BY Public_CorkBoards DESC, Private_CorkBoards DESC;
+    SELECT t0.name, Public_CorkBoards, Public_PushPins,Private_CorkBoards, Private_PushPins From
+
+    (SELECT email, name from user) t0
+    LEFT JOIN
+    (SELECT email, Public_CorkBoards, Public_PushPins from
+                    (SELECT User.email, Count(DISTINCT corkboard.CorkBoardID) AS Public_CorkBoards, Count(Pushpin.pushPinID ) AS Public_PushPins
+            FROM  (USER Inner JOIN (PublicCorkboard INNER JOIN Corkboard on PublicCorkboard.CorkboardID= Corkboard.CorkboardID) on User.email= Corkboard.email Inner Join PushPin on Corkboard.CorkboardID=PushPin.CorkboardID )
+            group by user.email) as a) t1 on t0.email=t1.email
+    LEFT JOIN
+    (SELECT email, Private_CorkBoards, Private_PushPins from
+            (SELECT User.email, Count(DISTINCT corkboard.CorkBoardID) AS Private_CorkBoards, Count(Pushpin.pushPinID ) AS Private_PushPins
+            FROM  (USER Inner JOIN (PrivateCorkBoard INNER JOIN Corkboard on PrivateCorkBoard.CorkboardID= Corkboard.CorkboardID) on User.email= Corkboard.email Inner Join PushPin on Corkboard.CorkboardID=PushPin.CorkboardID )
+            group by user.email) as b) t2
+     on t1.email=t2.email
+    ORDER BY Public_CorkBoards DESC, Private_CorkBoards DESC, Private_CorkBoards DESC, Private_PushPins DESC;
     """
     sql1 = text(corkboardstatistics)
     result1 = db.engine.execute(sql1)
@@ -280,16 +281,16 @@ def search():
 @login_required
 def search_result(search_item):
     search_query = """
-    SELECT pushPin.pushPinID, pushPin.Description, pushPin.Image_URL, corkBoard.Title, User.name 
-    FROM PushPin, CorkBoard, User 
+    SELECT pushPin.pushPinID, pushPin.Description, pushPin.Image_URL, corkBoard.Title, User.name
+    FROM PushPin, CorkBoard, User
     WHERE CorkBoard.cat_name LIKE '%""" + search_item + """%' and PushPin.corkBoardID = CorkBoard.corkBoardID and CorkBoard.email = User.email
-    Union 
-    SELECT pushPin.pushPinID, PushPin.Description, PushPin.Image_URL, CorkBoard.Title, User.name 
-    FROM PushPin, CorkBoard, User 
+    Union
+    SELECT pushPin.pushPinID, PushPin.Description, PushPin.Image_URL, CorkBoard.Title, User.name
+    FROM PushPin, CorkBoard, User
     WHERE PushPin.description LIKE '%""" + search_item + """%' and PushPin.corkBoardID = CorkBoard.corkBoardID and CorkBoard.email = User.email
     Union
-    SELECT pushPin.pushPinID, PushPin.Description, PushPin.Image_URL, CorkBoard.Title, User.name 
-    FROM Tag, PushPin, CorkBoard, User 
+    SELECT pushPin.pushPinID, PushPin.Description, PushPin.Image_URL, CorkBoard.Title, User.name
+    FROM Tag, PushPin, CorkBoard, User
     WHERE Tag.tag LIKE '%""" + search_item + """%' and Tag.pushPinID = PushPin.pushPinID and PushPin.corkBoardID = CorkBoard.corkBoardID and CorkBoard.email = User.email
     """
     sql1 = text(search_query)
@@ -360,7 +361,7 @@ def new_pushpin():
         tag1 = tag(pushPinID= pushpin1.pushPinID, tag= form.tags)
         db.session.add(pushpin1)
         db.session.commit()
-        
+
         update_corkboard_time = """
         UPDATE CorkBoard
         SET last_update = NOW()
