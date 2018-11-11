@@ -245,7 +245,7 @@ def corkboards(corkboard_id):
     pushpins= pushpin.query.filter(pushpin.corkBoardID==corkboard_id).all()
     # pdb.set_trace()
 
-    return render_template('corkboard.html', title=corkboard1.title, corkboard= corkboard1, pushpins=pushpins)
+    return render_template('corkboard.html', title=corkboard1.title, corkboard= corkboard1, cat_name= corkboard1.cat_name, last_update= corkboard1.last_update, pushpins=pushpins)
 
 
 @app.route("/pushpin/new", methods=['GET', 'POST'])
@@ -299,3 +299,61 @@ def _follow(owner_id):
         follow1= follow(email=current_user.email, owner_email=owner_id)
         db.session.add(follow1)
         db.session.commit()
+
+
+@app.route("/populartags")
+@login_required
+def populartags():
+
+    populartags = """
+    (SELECT  Tag.tag, COUNT(Tag.pushPinID) AS PushPins, COUNT(DISTINCT PushPin.corkBoardID) AS Unique_CorkBoards
+    FROM Tag INNER JOIN PushPin
+    ON Tag.pushPinID=PushPin.pushPinID
+    GROUP BY Tag.Tag
+    ORDER BY PushPins DESC
+    LIMIT 5);
+    """
+    sql1 = text(populartags)
+    result1 = db.engine.execute(sql1)
+    popular_tags = result1
+
+    return render_template('populartags.html', Popular_Tags =popular_tags)
+
+@app.route("/popularsites")
+@login_required
+def popularsites():
+
+    popularsites = """
+    (SELECT substring_index(REPLACE(REPLACE(Image_URL, 'https://', ''),'http://', '' ), '/', 1) AS short_URL, COUNT(pushPinID) AS pushPinCount
+    FROM PushPin
+    Group By short_URL
+    ORDER BY pushPinCount DESC
+    LIMIT 4);
+    """
+    sql1 = text(popularsites)
+    result1 = db.engine.execute(sql1)
+    popular_sites = result1
+
+    return render_template('popularsites.html', Popular_Sites =popular_sites)
+
+@app.route("/corkboardstatistics")
+@login_required
+def corkboardstatistics():
+
+    corkboardstatistics = """
+    (SELECT email, Public_CorkBoards, Public_PushPins, IFNULL(null, 0) as Private_CorkBoards, IFNULL(null, 0) as Private_PushPins from
+        (SELECT User.email, Count(DISTINCT corkboard.CorkBoardID) AS Public_CorkBoards, Count(Pushpin.pushPinID ) AS Public_PushPins
+        FROM  (USER Inner JOIN (PublicCorkboard INNER JOIN Corkboard on PublicCorkboard.CorkboardID= Corkboard.CorkboardID) on User.email= Corkboard.email Inner Join PushPin on Corkboard.CorkboardID=PushPin.CorkboardID )
+        group by user.email) as a 
+    UNION ALL
+    SELECT email, IFNULL(null, 0), IFNULL(null, 0), Private_CorkBoards, Private_PushPins from
+        (SELECT User.email, Count(DISTINCT corkboard.CorkBoardID) AS Private_CorkBoards, Count(Pushpin.pushPinID ) AS Private_PushPins
+        FROM  (USER Inner JOIN (PrivateCorkBoard INNER JOIN Corkboard on PrivateCorkBoard.CorkboardID= Corkboard.CorkboardID) on User.email= Corkboard.email Inner Join PushPin on Corkboard.CorkboardID=PushPin.CorkboardID )
+        group by user.email) as b
+    ORDER BY Public_CorkBoards DESC, Private_CorkBoards DESC);
+    """
+    sql1 = text(corkboardstatistics)
+    result1 = db.engine.execute(sql1)
+    corkboard_statistics = result1
+
+    return render_template('corkboardstatistics.html', CorkBoard_Statistics =corkboard_statistics)
