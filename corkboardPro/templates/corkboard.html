@@ -4,7 +4,7 @@
     <div class="content-section">
         <div class="media">
           <div class="media-body">
-            <h2 class="homepage-heading"> {{corkboard.title}} <a  href="{{ url_for('_follow',corkboard_id1= corkboard.corkBoardID) }}""> <button type="button" class="btn btn-primary">follow</button> </a> </h2>
+            <h2 class="homepage-heading"> {{corkboard.title}} <a  href="{{ url_for('_follow',corkboard_id1= corkboard.corkBoardID) }}"> <button type="button" class="btn btn-primary">follow</button> </a> </h2>
             {% if current_user.email== corkboard.email %}
                 <a class="nav-item nav-link" href="{{ url_for('new_pushpin') }}">Add Pushpin </a>
             {% endif %}

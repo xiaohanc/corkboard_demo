@@ -22,20 +22,20 @@ def home_screen():
     if not current_user.is_authenticated:
         return redirect(url_for('login'))
     show_recent = """
-    (SELECT CorkBoard.corkBoardID, CorkBoard.email, CorkBoard.cat_name, CorkBoard.title, CorkBoard.last_update, PrivateCorkboard.password, User.name
+    SELECT recent.corkBoardID, recent.email, recent.cat_name, recent.title, recent.last_update, recent.password, recent.name
+    FROM
+    ((SELECT CorkBoard.corkBoardID, CorkBoard.email, CorkBoard.cat_name, CorkBoard.title, CorkBoard.last_update, PrivateCorkboard.password, User.name
     FROM Follow, CorkBoard, PrivateCorkboard, User
-    WHERE Follow.email= '""" + current_user.email + """' AND Follow.owner_email=CorkBoard.email and PrivateCorkboard.corkBoardID=Corkboard.corkBoardID and User.email= Follow.owner_email
-    ORDER BY CorkBoard.last_update DESC LIMIT 4)
+    WHERE Follow.email= '""" + current_user.email + """' AND Follow.owner_email=CorkBoard.email and PrivateCorkboard.corkBoardID=Corkboard.corkBoardID and User.email= Follow.owner_email)
     UNION
     (SELECT CorkBoard.corkBoardID, CorkBoard.email, CorkBoard.cat_name, CorkBoard.title, CorkBoard.last_update, NULL as password, User.name
     FROM Follow, CorkBoard, PublicCorkboard, User
-    WHERE Follow.email= '""" + current_user.email + """' AND Follow.owner_email=CorkBoard.email and PublicCorkboard.corkBoardID=Corkboard.corkBoardID and User.email= Follow.owner_email
-    ORDER BY CorkBoard.last_update DESC LIMIT 4)
+    WHERE Follow.email= '""" + current_user.email + """' AND Follow.owner_email=CorkBoard.email and PublicCorkboard.corkBoardID=Corkboard.corkBoardID and User.email= Follow.owner_email)
     UNION
     (SELECT CorkBoard.corkBoardID,corkBoard.email, CorkBoard.cat_name, CorkBoard.title, CorkBoard.last_update, NULL as password, User.name
     FROM Watch, corkBoard, User
-    WHERE Watch.email='""" + current_user.email + """' and Watch.corkBoardID = corkBoard.corkBoardID and User.email= corkBoard.email
-    ORDER BY CorkBoard.last_update DESC LIMIT 4);
+    WHERE Watch.email='""" + current_user.email + """' and Watch.corkBoardID = corkBoard.corkBoardID and User.email= corkBoard.email)) recent
+    ORDER BY recent.last_update DESC LIMIT 4
     """
     # sql = text(show_recent.replace("\n", ""))
     sql1 = text(show_recent)
@@ -48,14 +48,12 @@ def home_screen():
     (SELECT CorkBoard.corkBoardID, CorkBoard.title, COUNT(PushPin.pushPinID), NULL as password
     FROM PublicCorkBoard, corkBoard, PushPin
     WHERE CorkBoard.email = '""" + current_user.email + """'  and corkBoard.corkBoardID = PublicCorkBoard.corkBoardID and pushPin.corkBoardID=corkBoard.corkBoardID
-    GROUP By pushPin.corkBoardID
-    ORDER BY corkBoard.title LIMIT 3)
+    GROUP By pushPin.corkBoardID)
     UNION
     (SELECT CorkBoard.corkBoardID,CorkBoard.title, COUNT(PushPin.pushPinID), PrivateCorkboard.password
     FROM PrivateCorkBoard, corkBoard, PushPin
     WHERE CorkBoard.email = '""" + current_user.email + """' and corkBoard.corkBoardID = PrivateCorkBoard.corkBoardID and pushPin.corkBoardID=corkBoard.corkBoardID
-    GROUP By pushPin.corkBoardID
-    ORDER BY corkBoard.title LIMIT 3);
+    GROUP By pushPin.corkBoardID);
     """
     sql2 = text(show_my_info)
     result2 = db.engine.execute(sql2)
