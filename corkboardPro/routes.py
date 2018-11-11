@@ -4,8 +4,8 @@ import secrets
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort, session
 from corkboardPro import app, db, bcrypt
-from corkboardPro.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, CorkBoardForm, PushPinForm, PrivateLoginForm
-from corkboardPro.models import user, Post, corkboard, privatecorkboard, publiccorkboard, pushpin,tag, follow
+from corkboardPro.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, CorkBoardForm, PushPinForm, PrivateLoginForm, CommentForm
+from corkboardPro.models import user, Post, corkboard, privatecorkboard, publiccorkboard, pushpin,tag, follow, watch, likes, comment
 from flask_login import login_user, current_user, logout_user, login_required
 from sqlalchemy import text
 from datetime import datetime
@@ -242,10 +242,13 @@ def new_corkboard():
 def corkboards(corkboard_id):
     corkboard1 = corkboard.query.get_or_404(corkboard_id)
     session['corkID']= corkboard_id
-    pushpins= pushpin.query.filter(pushpin.corkBoardID==corkboard_id).all()
+    pushpins= pushpin.query.filter_by(corkBoardID=corkboard_id).all()
+    #
+    isPrivate= True if privatecorkboard.query.filter_by(corkBoardID=corkboard_id).first() else False
     # pdb.set_trace()
+    user1 = user.query.filter_by(email=corkboard1.email).first()
 
-    return render_template('corkboard.html', title=corkboard1.title, corkboard= corkboard1, cat_name= corkboard1.cat_name, last_update= corkboard1.last_update, pushpins=pushpins)
+    return render_template('corkboard.html', title=corkboard1.title, corkboard= corkboard1, pushpins=pushpins, owner=user1, isPrivate= isPrivate)
 
 
 @app.route("/pushpin/new", methods=['GET', 'POST'])
@@ -267,14 +270,21 @@ def new_pushpin():
                            form=form, legend='New PushPin')
 
 
-@app.route("/pushpin/<int:pushpin_id>")
+@app.route("/pushpin/<int:pushpin_id>",  methods=['GET', 'POST'])
 @login_required
 def pushpins(pushpin_id):
     pushpin1 = pushpin.query.get_or_404(pushpin_id)
     corkboard1 = corkboard.query.get_or_404(pushpin1.corkBoardID)
-    # pdb.set_trace()
-
-    return render_template('pushpin.html', title=corkboard1.title, corkboard= corkboard1, pushpin=pushpin1)
+    user1 = user.query.filter_by(email=corkboard1.email).first()
+    comments= comment.query.filter_by(pushPinID= pushpin_id).all()
+    # will stop
+    form= CommentForm()
+    if form.validate_on_submit():
+        comment1= comment(email=current_user.email, content= form.content.data, pushPinID= pushpin_id, added_time= datetime.utcnow())
+        db.session.add(comment1)
+        db.session.commit()
+        return redirect( url_for('pushpins', pushpin_id=pushpin_id))
+    return render_template('pushpin.html', title=corkboard1.title, corkboard= corkboard1, pushpin=pushpin1, comments=comments, form=form, owner=user1)
 
 
 @app.route("/Privatelogin/<int:corkboard_id>", methods=['GET', 'POST'])
@@ -289,71 +299,47 @@ def privatelogin(corkboard_id):
     return render_template('private_login.html', form=form)
     # return redirect(url_for('corkboards', corkboard_id=corkboard1.corkBoardID))
 
-@app.route("/follow/<string:owner_id>")
+@app.route("/follow/<int:corkboard_id1>")
 @login_required
-def _follow(owner_id):
-
+def _follow(corkboard_id1):
+    # pdb.set_trace()
+    corkboard1 = corkboard.query.filter_by(corkBoardID=corkboard_id1).first()
+    owner_id= corkboard1.email
     follow1= follow.query.filter_by(email=current_user.email, owner_email=owner_id).first()
-    pdb.set_trace()
+    # pdb.set_trace()
     if not follow1:
         follow1= follow(email=current_user.email, owner_email=owner_id)
         db.session.add(follow1)
         db.session.commit()
+    return redirect(url_for('corkboards',corkboard_id=corkboard_id1))
 
 
-@app.route("/populartags")
+@app.route("/watch/<int:corkboard_id1>")
 @login_required
-def populartags():
+def _watch(corkboard_id1):
+    # pdb.set_trace()
 
-    populartags = """
-    (SELECT  Tag.tag, COUNT(Tag.pushPinID) AS PushPins, COUNT(DISTINCT PushPin.corkBoardID) AS Unique_CorkBoards
-    FROM Tag INNER JOIN PushPin
-    ON Tag.pushPinID=PushPin.pushPinID
-    GROUP BY Tag.Tag
-    ORDER BY PushPins DESC
-    LIMIT 5);
-    """
-    sql1 = text(populartags)
-    result1 = db.engine.execute(sql1)
-    popular_tags = result1
+    watch1= watch.query.filter_by(email=current_user.email, corkBoardID=corkboard_id1).first()
 
-    return render_template('populartags.html', Popular_Tags =popular_tags)
+    if not watch1:
+        watch1= watch(email=current_user.email, corkBoardID=corkboard_id1)
 
-@app.route("/popularsites")
+        db.session.add(watch1)
+        db.session.commit()
+
+    return redirect(url_for('corkboards',corkboard_id=corkboard_id1))
+
+
+@app.route("/like/<int:pushpin_id1>")
 @login_required
-def popularsites():
+def _like(pushpin_id1):
+    # pdb.set_trace()
 
-    popularsites = """
-    (SELECT substring_index(REPLACE(REPLACE(Image_URL, 'https://', ''),'http://', '' ), '/', 1) AS short_URL, COUNT(pushPinID) AS pushPinCount
-    FROM PushPin
-    Group By short_URL
-    ORDER BY pushPinCount DESC
-    LIMIT 4);
-    """
-    sql1 = text(popularsites)
-    result1 = db.engine.execute(sql1)
-    popular_sites = result1
+    like1= likes.query.filter_by(email=current_user.email, pushPinID=pushpin_id1).first()
 
-    return render_template('popularsites.html', Popular_Sites =popular_sites)
+    if not like1:
+        like1= likes(email=current_user.email, pushPinID=pushpin_id1)
+        db.session.add(like1)
+        db.session.commit()
 
-@app.route("/corkboardstatistics")
-@login_required
-def corkboardstatistics():
-
-    corkboardstatistics = """
-    (SELECT email, Public_CorkBoards, Public_PushPins, IFNULL(null, 0) as Private_CorkBoards, IFNULL(null, 0) as Private_PushPins from
-        (SELECT User.email, Count(DISTINCT corkboard.CorkBoardID) AS Public_CorkBoards, Count(Pushpin.pushPinID ) AS Public_PushPins
-        FROM  (USER Inner JOIN (PublicCorkboard INNER JOIN Corkboard on PublicCorkboard.CorkboardID= Corkboard.CorkboardID) on User.email= Corkboard.email Inner Join PushPin on Corkboard.CorkboardID=PushPin.CorkboardID )
-        group by user.email) as a 
-    UNION ALL
-    SELECT email, IFNULL(null, 0), IFNULL(null, 0), Private_CorkBoards, Private_PushPins from
-        (SELECT User.email, Count(DISTINCT corkboard.CorkBoardID) AS Private_CorkBoards, Count(Pushpin.pushPinID ) AS Private_PushPins
-        FROM  (USER Inner JOIN (PrivateCorkBoard INNER JOIN Corkboard on PrivateCorkBoard.CorkboardID= Corkboard.CorkboardID) on User.email= Corkboard.email Inner Join PushPin on Corkboard.CorkboardID=PushPin.CorkboardID )
-        group by user.email) as b
-    ORDER BY Public_CorkBoards DESC, Private_CorkBoards DESC);
-    """
-    sql1 = text(corkboardstatistics)
-    result1 = db.engine.execute(sql1)
-    corkboard_statistics = result1
-
-    return render_template('corkboardstatistics.html', CorkBoard_Statistics =corkboard_statistics)
+    return redirect(url_for('pushpins',pushpin_id=pushpin_id1))
