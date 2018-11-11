@@ -205,6 +205,59 @@ def user_posts(username):
         .paginate(page=page, per_page=5)
     return render_template('user_posts.html', posts=posts, user=user)
 
+
+@app.route("/populartags")
+@login_required
+def popular_tags():
+    popular_query = """
+    SELECT  Tag.tag, COUNT(Tag.pushPinID) AS PushPins, COUNT(DISTINCT PushPin.corkBoardID) AS Unique_CorkBoards
+    FROM Tag INNER JOIN PushPin
+    ON Tag.pushPinID=PushPin.pushPinID
+    GROUP BY Tag.Tag
+    ORDER BY PushPins DESC
+    LIMIT 5;
+    """
+    sql1 = text(popular_query)
+    result1 = db.engine.execute(sql1)
+    tags = []
+    for row in result1:
+        tags.append(row)
+    return render_template('popular_tags.html', tags=tags)
+
+
+@app.route("/search")
+@login_required
+def search():
+    search_item = request.args['search_item']
+    return redirect(url_for('search_result', search_item=search_item))
+
+
+@app.route("/search/<string:search_item>")
+@login_required
+def search_result(search_item):
+    search_query = """
+    SELECT pushPin.pushPinID, pushPin.Description, pushPin.Image_URL, corkBoard.Title, User.name 
+    FROM PushPin, CorkBoard, User 
+    WHERE CorkBoard.cat_name LIKE '%""" + search_item + """%' and PushPin.corkBoardID = CorkBoard.corkBoardID and CorkBoard.email = User.email
+    Union 
+    SELECT pushPin.pushPinID, PushPin.Description, PushPin.Image_URL, CorkBoard.Title, User.name 
+    FROM PushPin, CorkBoard, User 
+    WHERE PushPin.description LIKE '%""" + search_item + """%' and PushPin.corkBoardID = CorkBoard.corkBoardID and CorkBoard.email = User.email
+    Union
+    SELECT pushPin.pushPinID, PushPin.Description, PushPin.Image_URL, CorkBoard.Title, User.name 
+    FROM Tag, PushPin, CorkBoard, User 
+    WHERE Tag.tag LIKE '%""" + search_item + """%' and Tag.pushPinID = PushPin.pushPinID and PushPin.corkBoardID = CorkBoard.corkBoardID and CorkBoard.email = User.email
+    """
+    sql1 = text(search_query)
+    result1 = db.engine.execute(sql1)
+    pushpins = []
+    for row in result1:
+        pushpins.append(row)
+
+    # [(1, 'first image', 'image_1_1', 'user1-cork1', 'user1')]
+    return render_template('search_results.html', search_item= search_item, pushpins = pushpins)
+
+
 @app.route("/corkboard/new", methods=['GET', 'POST'])
 @login_required
 def new_corkboard():
@@ -263,6 +316,14 @@ def new_pushpin():
         tag1 = tag(pushPinID= pushpin1.pushPinID, tag= form.tags)
         db.session.add(pushpin1)
         db.session.commit()
+        
+        update_corkboard_time = """
+        UPDATE CorkBoard
+        SET last_update = NOW()
+        WHERE corkBoardID = """ + corkboard_ID + """;
+        """
+        last_update_sql = text(update_corkboard_time)
+        db.engine.execute(last_update_sql)
 
         flash('Your PushPin has been created!', 'success')
         return redirect( url_for('corkboards', corkboard_id=corkboard_ID))
@@ -275,7 +336,6 @@ def new_pushpin():
 def pushpins(pushpin_id):
     pushpin1 = pushpin.query.get_or_404(pushpin_id)
     corkboard1 = corkboard.query.get_or_404(pushpin1.corkBoardID)
-    user1 = user.query.filter_by(email=corkboard1.email).first()
     comments= comment.query.filter_by(pushPinID= pushpin_id).all()
     # will stop
     form= CommentForm()
@@ -284,7 +344,7 @@ def pushpins(pushpin_id):
         db.session.add(comment1)
         db.session.commit()
         return redirect( url_for('pushpins', pushpin_id=pushpin_id))
-    return render_template('pushpin.html', title=corkboard1.title, corkboard= corkboard1, pushpin=pushpin1, comments=comments, form=form, owner=user1)
+    return render_template('pushpin.html', title=corkboard1.title, corkboard= corkboard1, pushpin=pushpin1, comments=comments, form=form)
 
 
 @app.route("/Privatelogin/<int:corkboard_id>", methods=['GET', 'POST'])
