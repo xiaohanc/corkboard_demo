@@ -7,7 +7,7 @@ from corkboardPro import app, db, bcrypt
 from corkboardPro.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, CorkBoardForm, PushPinForm, PrivateLoginForm, CommentForm
 from corkboardPro.models import user, Post, corkboard, privatecorkboard, publiccorkboard, pushpin,tag, follow, watch, likes, comment
 from flask_login import login_user, current_user, logout_user, login_required
-from sqlalchemy import text
+from sqlalchemy import text, update
 from datetime import datetime
 
 @app.route("/home")
@@ -355,20 +355,22 @@ def new_pushpin():
     form = PushPinForm()
     if form.validate_on_submit():
         corkboard_ID= session.get('corkID', None)
-        pushpin1 = pushpin(corkBoardID= corkboard_ID, image_URL=form.image_URL.data, description=form.description.data, pinned_time= datetime.utcnow() )
+        time= datetime.utcnow()
+        pushpin1 = pushpin(corkBoardID= corkboard_ID, image_URL=form.image_URL.data, description=form.description.data, pinned_time= time )
         db.session.add(pushpin1)
         db.session.commit()
-        tag1 = tag(pushPinID= pushpin1.pushPinID, tag= form.tags)
-        db.session.add(pushpin1)
+        tag1 = tag(pushPinID= pushpin1.pushPinID, tag= form.tags.data)
+        # pdb.set_trace()
+        db.session.add(tag1)
         db.session.commit()
-
-        update_corkboard_time = """
-        UPDATE CorkBoard
-        SET last_update = NOW()
-        WHERE corkBoardID = """ + corkboard_ID + """;
-        """
-        last_update_sql = text(update_corkboard_time)
-        db.engine.execute(last_update_sql)
+        corkboard.update().where(corkBoardID=corkboard_ID).values(last_update=time)
+        # update_corkboard_time = """
+        # UPDATE CorkBoard
+        # SET last_update = NOW()
+        # WHERE corkBoardID = """ + corkboard_ID + """;
+        # """
+        # last_update_sql = text(update_corkboard_time)
+        # db.engine.execute(last_update_sql)
 
         flash('Your PushPin has been created!', 'success')
         return redirect( url_for('corkboards', corkboard_id=corkboard_ID))
