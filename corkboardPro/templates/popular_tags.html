@@ -10,15 +10,24 @@
     </div>
     
     <div class="content-section">
-        <p>
+        <h6>
             <strong><u>Tag</u></strong>
+            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
             <u><strong>PushPins</strong></u>
+            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
             <u><strong>Unique CorkBoards</strong></u> 
-        </p>
+        </h6>
         {% for tag in tags %}
             <br>
             <a href="{{ url_for('search_result', search_item=tag.tag) }}"><strong><u>{{tag.tag}}</u></strong></a>
-                &nbsp&nbsp&nbsp&nbsp&nbsp   {{tag[1]}}   &nbsp&nbsp&nbsp&nbsp&nbsp  {{tag[2]}}
+            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp   {{tag[1]}}
+            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  {{tag[2]}}
         {% endfor %}
     </div>
 {% endblock content %}

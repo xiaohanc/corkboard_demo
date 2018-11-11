@@ -225,6 +225,50 @@ def popular_tags():
     return render_template('popular_tags.html', tags=tags)
 
 
+@app.route("/popularsites")
+@login_required
+def popularsites():
+    popularsites = """
+    (SELECT substring_index(REPLACE(REPLACE(Image_URL, 'https://', ''),'http://', '' ), '/', 1) AS short_URL, COUNT(pushPinID) AS pushPinCount
+    FROM PushPin
+    Group By short_URL
+    ORDER BY pushPinCount DESC
+    LIMIT 4);
+    """
+    sql1 = text(popularsites)
+    result1 = db.engine.execute(sql1)
+    popular_sites = []
+    for row in result1:
+        popular_sites.append(row)
+    return render_template('popularsites.html', popular_sites=popular_sites)
+
+@app.route("/corkboardstatistics")
+@login_required
+def corkboardstatistics():
+    corkboardstatistics = """
+    SELECT name, Public_CorkBoards, Public_PushPins, IFNULL(null, 0) as Private_CorkBoards, IFNULL(null, 0) as Private_PushPins from
+    (SELECT User.name, Count(DISTINCT corkboard.CorkBoardID) AS Public_CorkBoards, 
+    Count(Pushpin.pushPinID ) AS Public_PushPins
+    FROM  (USER Inner JOIN (PublicCorkboard INNER JOIN Corkboard on PublicCorkboard.CorkboardID= Corkboard.CorkboardID) 
+    on User.email= Corkboard.email Inner Join PushPin on Corkboard.CorkboardID=PushPin.CorkboardID )
+    group by user.email) as a 
+    UNION ALL
+    SELECT name, IFNULL(null, 0), IFNULL(null, 0), Private_CorkBoards, Private_PushPins from
+    (SELECT User.name, Count(DISTINCT corkboard.CorkBoardID) AS Private_CorkBoards, 
+    Count(Pushpin.pushPinID ) AS Private_PushPins
+    FROM  (USER Inner JOIN (PrivateCorkBoard INNER JOIN Corkboard on PrivateCorkBoard.CorkboardID= Corkboard.CorkboardID) 
+    on User.email= Corkboard.email Inner Join PushPin on Corkboard.CorkboardID=PushPin.CorkboardID )
+    group by user.email) as b
+    ORDER BY Public_CorkBoards DESC, Private_CorkBoards DESC;
+    """
+    sql1 = text(corkboardstatistics)
+    result1 = db.engine.execute(sql1)
+    corkboard_statistics = []
+    for row in result1:
+        corkboard_statistics.append(row)
+    return render_template('corkboardstatistics.html', corkboard_statistics=corkboard_statistics)
+
+
 @app.route("/search")
 @login_required
 def search():
