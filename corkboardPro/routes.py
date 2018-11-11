@@ -262,7 +262,7 @@ def corkboardstatistics():
             (SELECT User.email, Count(DISTINCT corkboard.CorkBoardID) AS Private_CorkBoards, Count(Pushpin.pushPinID ) AS Private_PushPins
             FROM  (USER Inner JOIN (PrivateCorkBoard INNER JOIN Corkboard on PrivateCorkBoard.CorkboardID= Corkboard.CorkboardID) on User.email= Corkboard.email Inner Join PushPin on Corkboard.CorkboardID=PushPin.CorkboardID )
             group by user.email) as b) t2
-    on t1.email=t2.email
+    on t0.email=t2.email
     ORDER BY Public_CorkBoards DESC, Private_CorkBoards DESC, Private_CorkBoards DESC, Private_PushPins DESC;
     SELECT email, count(*) FROM `corkboard` c, publiccorkboard p where c.corkBoardID=p.corkBoardID group by email;
     """
