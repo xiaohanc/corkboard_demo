@@ -6,7 +6,7 @@
 
         <div class="content-section">
 
-                <h2 class="homepage-heading"> {{owner.name}} <a  href="{{ url_for('_follow',corkboard_id1= corkboard.corkBoardID) }}""> <button type="button" class="btn btn-primary">follow</button> </a> </h2>
+                <h2 class="homepage-heading"> {{owner.name}} <a  href="{{ url_for('_follow',corkboard_id1= corkboard.corkBoardID) }}"> <button type="button" class="btn btn-primary">follow</button> </a> </h2>
             </h4>
             <p class="text-secondary"> Pinned by {{current_user.name}} on {{pushpin.pinned_time}} <a href="{{ url_for('corkboards', corkboard_id=corkboard.corkBoardID) }}"> {{corkboard.title}} </a> </p>
 
@@ -25,13 +25,15 @@
         </div>
 
         <div class="media">
-          <div class="content">
-                 <h6> Liked by:
+          <div class="media-body">
+                 <h6> liked by
                         {% for l in like %}
-                        <strong>{{ l.name }}</strong>
+                         <strong>{{ l.name }} </strong>
                         {% endfor %}
-                        <a  href="{{ url_for('_like',pushpin_id1= pushpin.pushPinID) }}"> <button style="float: right;" type="button"  class="btn btn-primary">like</button> </a> </h6>
-
+                        <a  href="{{ url_for('_like',pushpin_id1= pushpin.pushPinID) }}">
+                            <button style="float: right;" type="button" class="btn btn-primary">like</button>
+                        </a>
+                 </h6>
           </div>
         </div>
 
