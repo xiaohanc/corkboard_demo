@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1 class="border-bottom mb-5">CorkBoard Statistics
+    <div class="content-section">
+        <div class="media">
+          <div class="media-body">
+            <h2 class="homepage-heading">CorkBoard Statistics
+          </div>
+        </div>
+    </div>
+    <div class="content-section">
+        <h6>
+            <strong><u>User</u></strong>
+            &nbsp&nbsp&nbsp
+            <u><strong>Public CorkBoards</strong></u>
+            &nbsp&nbsp&nbsp
+            <u><strong>Public PushPins</strong></u>
+            &nbsp&nbsp
+            <u><strong>Private CorkBoards</strong></u>
+            &nbsp&nbsp
+            <u><strong>Private PushPins</strong></u>
+        </h6>
+        {% for corkboard_statistic in corkboard_statistics %}
+            <h6>
+            <a><strong><u>{{corkboard_statistic[0]}}</u></strong></a>
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                   {{corkboard_statistic[1]}}   
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                   {{corkboard_statistic[2]}}
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                   {{corkboard_statistic[3]}}
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                   {{corkboard_statistic[4]}}
+        {% endfor %}
+    </div>
+
+{% endblock content %}
