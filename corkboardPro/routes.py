@@ -367,7 +367,8 @@ def new_pushpin():
         # pdb.set_trace()
         db.session.add(tag1)
         db.session.commit()
-        corkboard.update().where(corkBoardID=corkboard_ID).values(last_update=time)
+
+        update(corkboard).where(corkBoardID=corkboard_ID).values(last_update=time)
         # update_corkboard_time = """
         # UPDATE CorkBoard
         # SET last_update = NOW()
