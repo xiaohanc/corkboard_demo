@@ -368,15 +368,30 @@ def new_pushpin():
         db.session.add(tag1)
         db.session.commit()
 
-        update(corkboard).where(corkBoardID=corkboard_ID).values(last_update=time)
-        # update_corkboard_time = """
-        # UPDATE CorkBoard
-        # SET last_update = NOW()
-        # WHERE corkBoardID = """ + corkboard_ID + """;
-        # """
-        # last_update_sql = text(update_corkboard_time)
-        # db.engine.execute(last_update_sql)
+        # update(corkboard).where(corkBoardID=corkboard_ID).values(last_update=time)
+        update_corkboard_time = """
+            UPDATE CorkBoard
+            SET last_update = NOW()
+            WHERE corkBoardID = """ + str(corkboard_ID) + """;
+        """
+        last_update_sql = text(update_corkboard_time)
+        db.engine.execute(last_update_sql)
 
+        corkboardPub = publiccorkboard.query.filter_by(corkBoardID=corkboard_ID).first()
+        if corkboardPub:
+            update_corkboard_time = """
+                UPDATE publiccorkboard
+                SET last_update = NOW()
+                WHERE corkBoardID = """ + str(corkboard_ID) + """;
+                """
+        else:
+            update_corkboard_time = """
+                UPDATE privatecorkboard
+                SET last_update = NOW()
+                WHERE corkBoardID = """ + str(corkboard_ID) + """;
+                """
+        last_update_sql = text(update_corkboard_time)
+        db.engine.execute(last_update_sql)
         flash('Your PushPin has been created!', 'success')
         return redirect( url_for('corkboards', corkboard_id=corkboard_ID))
     return render_template('create_pushpin.html', title='New PushPin',
