@@ -45,7 +45,7 @@ def home_screen():
         recent_info.append(row)
 
     show_my_info = """
-    SELECT t0.corkBoardID, t0.title, COUNT(*), t2.password FROM
+    SELECT t0.corkBoardID, COUNT(*), t0.title, t2.password FROM
         (SELECT * FROM CorkBoard WHERE CorkBoard.email = '""" + current_user.email + """' ) t0
         LEFT JOIN
         (SELECT * FROM PublicCorkboard) t1 on t0.corkBoardID= t1.corkBoardID
