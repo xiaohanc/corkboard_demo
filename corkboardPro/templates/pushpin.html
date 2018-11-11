@@ -1,28 +1,35 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1 class="border-bottom mb-5">{{corkboard.title}} of {{corkboard.email}}</h1>
+
     <div class="content-section">
 
 
         <div class="content-section">
-            <h4  class="border-bottom recent-item mb-5"> {{corkboard.title}} </a>
-                <h2 class="homepage-heading"> {{corkboard.title}} <a  href="{{ url_for('_follow',corkboard_id1= corkboard.corkBoardID) }}""> <button type="button" class="btn btn-primary">follow</button> </a> </h2>
+
+                <h2 class="homepage-heading"> {{owner.name}} <a  href="{{ url_for('_follow',corkboard_id1= corkboard.corkBoardID) }}""> <button type="button" class="btn btn-primary">follow</button> </a> </h2>
             </h4>
-            <p class="text-secondary"> Updated by {{current_user.name}} on {{pushpin.pinned_time}}</p>
+            <p class="text-secondary"> Pinned by {{current_user.name}} on {{pushpin.pinned_time}} <a href="{{ url_for('corkboards', corkboard_id=corkboard.corkBoardID) }}"> {{corkboard.title}} </a> </p>
 
         </div>
 
         <div class="media">
           <div class="media-body">
-            <h2 class="homepage-heading"> {{pushpin.image_URL}}</h2>
+
             <img class="img-fluid" src="{{ url_for('static', filename='profile_pics/' + pushpin.image_URL) }}">
+            <h2 class="homepage-heading"> {{pushpin.description}}</h2>
+               <p> {% for tag in tags %}
+                     {{tag }}
+                {%endfor %}
+                </p>
           </div>
         </div>
 
         <div class="media">
           <div class="media-body">
-                 <h6> This CorkBoard has  likes
-
+                 <h6> This CorkBoard liked by
+                        {% for l in like %}
+                                {{ l.name }}
+                        {% endfor %}
                         <a  href="{{ url_for('_like',pushpin_id1= pushpin.pushPinID) }}"> <button type="button" class="btn btn-primary">like</button> </a> </h6>
 
           </div>
@@ -49,7 +56,7 @@
 
                     {% for c in comments %}
 
-                                <p class="article-content">{{ c.content }}</p>
+                                <p class="article-content">{{ c.name}}:  {{c.content }}</p>
                     {% endfor %}
 
 

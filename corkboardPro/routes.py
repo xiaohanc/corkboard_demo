@@ -362,10 +362,13 @@ def new_pushpin():
         pushpin1 = pushpin(corkBoardID= corkboard_ID, image_URL=form.image_URL.data, description=form.description.data, pinned_time= time )
         db.session.add(pushpin1)
         db.session.commit()
-        tag1 = tag(pushPinID= pushpin1.pushPinID, tag= form.tags.data)
+
         # pdb.set_trace()
-        db.session.add(tag1)
-        db.session.commit()
+        tags= form.tags.data.split(',')
+        for tag_s in tags:
+            tag1 = tag(pushPinID= pushpin1.pushPinID, tag= tag_s)
+            db.session.add(tag1)
+            db.session.commit()
 
         # update(corkboard).where(corkBoardID=corkboard_ID).values(last_update=time)
         update_corkboard_time = """
@@ -402,16 +405,33 @@ def new_pushpin():
 def pushpins(pushpin_id):
     pushpin1 = pushpin.query.get_or_404(pushpin_id)
     corkboard1 = corkboard.query.get_or_404(pushpin1.corkBoardID)
-
+    tags= tag.query.filter_by(pushPinID= pushpin_id).all()
+    owner= user.query.filter_by(email= corkboard1.email).first()
     comments= comment.query.filter_by(pushPinID= pushpin_id).all()
+
     # will stop
+
+    command = """
+                SELECT name
+                FROM user, likes
+                WHERE user.email= likes.email and pushPinID = """ + str(pushpin_id) + """;
+            """
+    last_query_sql = text(command)
+    _likes = db.engine.execute(last_query_sql)
+    command = """
+                SELECT name, content
+                FROM user, comment
+                WHERE user.email= comment.email and pushPinID = """ + str(pushpin_id) + """;
+            """
+    last_query_sql = text(command)
+    comments = db.engine.execute(last_query_sql)
     form= CommentForm()
     if form.validate_on_submit():
         comment1= comment(email=current_user.email, content= form.content.data, pushPinID= pushpin_id, added_time= datetime.utcnow())
         db.session.add(comment1)
         db.session.commit()
         return redirect( url_for('pushpins', pushpin_id=pushpin_id))
-    return render_template('pushpin.html', title=corkboard1.title, corkboard= corkboard1, pushpin=pushpin1, comments=comments, form=form)
+    return render_template('pushpin.html',owner=owner, title=corkboard1.title, corkboard= corkboard1, pushpin=pushpin1, comments=comments, form=form, tags=tags, like=_likes)
 
 
 @app.route("/Privatelogin/<int:corkboard_id>", methods=['GET', 'POST'])
