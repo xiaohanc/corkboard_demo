@@ -348,8 +348,9 @@ def corkboards(corkboard_id):
     isPrivate= True if privatecorkboard.query.filter_by(corkBoardID=corkboard_id).first() else False
     # pdb.set_trace()
     user1 = user.query.filter_by(email=corkboard1.email).first()
+    count_watch = watch.query.filter_by(corkBoardID=corkboard_id).with_entities(watch.email).count()
 
-    return render_template('corkboard.html', title=corkboard1.title, corkboard= corkboard1, pushpins=pushpins, owner=user1, isPrivate= isPrivate)
+    return render_template('corkboard.html', title=corkboard1.title, corkboard= corkboard1, pushpins=pushpins, owner=user1, isPrivate= isPrivate , count_watch=count_watch)
 
 
 @app.route("/pushpin/new", methods=['GET', 'POST'])

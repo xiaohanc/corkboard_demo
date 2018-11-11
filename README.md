@@ -1,14 +1,14 @@
 # CorkBoardPro
 
-###Todo list:
+**Todo list**:
 
 
 Add Category:
-- Dropdown list
+- ~~Dropdown list~~
 
 View CorkBoard Screen:
-- Category info
-- fix watch info
+- ~~Category info~~
+- ~~fix watch info~~
 
 Add PushPin
 - Add Tags

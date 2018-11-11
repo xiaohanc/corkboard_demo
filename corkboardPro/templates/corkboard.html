@@ -33,7 +33,7 @@
         </div>
         <div class="media">
           <div class="media-body">
-                 <h6> This CorkBoard has  watchers
+                 <h6> This CorkBoard has {{count_watch}} watchers
                         {% if current_user.email!= corkboard.email and isPrivate==False %}
                             <a  href="{{ url_for('_watch',corkboard_id1= corkboard.corkBoardID) }}"> <button type="button" class="btn btn-primary">watch</button> </a> </h6>
                         {% endif %}
