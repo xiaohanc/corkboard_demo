@@ -324,7 +324,7 @@ def new_corkboard():
             db.session.commit()
 
         flash('Your Corkboard has been created!', 'success')
-        return redirect(url_for('home_screen'))
+        return redirect(url_for('corkboards', corkboard_id=corkBoard1.corkBoardID))
     return render_template('create_corkboard.html', title='New Corkboard',
                            form=form, legend='New CorkBoard')
     # form = PostForm()
