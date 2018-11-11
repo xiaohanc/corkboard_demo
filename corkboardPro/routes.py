@@ -422,7 +422,7 @@ def pushpins(pushpin_id):
     command = """
                 SELECT name, content
                 FROM user, comment
-                WHERE user.email= comment.email and pushPinID = """ + str(pushpin_id) + """;
+                WHERE user.email= comment.email and pushPinID = """ + str(pushpin_id) + """ order by added_time Desc;
             """
     last_query_sql = text(command)
     comments = db.engine.execute(last_query_sql)

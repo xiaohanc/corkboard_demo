@@ -16,21 +16,21 @@
           <div class="media-body">
 
             <img class="img-fluid" src="{{ url_for('static', filename='profile_pics/' + pushpin.image_URL) }}">
-            <h2 class="homepage-heading"> {{pushpin.description}}</h2>
-               <p> {% for tag in tags %}
-                     {{tag }}
+            <p class="content"> {{pushpin.description}}</p>
+               <p> tags: {% for tag in tags %}
+                   <strong> {{tag.tag }} </strong>
                 {%endfor %}
                 </p>
           </div>
         </div>
 
         <div class="media">
-          <div class="media-body">
-                 <h6> This CorkBoard liked by
+          <div class="content">
+                 <h6> Liked by:
                         {% for l in like %}
-                                {{ l.name }}
+                        <strong>{{ l.name }}</strong>
                         {% endfor %}
-                        <a  href="{{ url_for('_like',pushpin_id1= pushpin.pushPinID) }}"> <button type="button" class="btn btn-primary">like</button> </a> </h6>
+                        <a  href="{{ url_for('_like',pushpin_id1= pushpin.pushPinID) }}"> <button style="float: right;" type="button"  class="btn btn-primary">like</button> </a> </h6>
 
           </div>
         </div>
