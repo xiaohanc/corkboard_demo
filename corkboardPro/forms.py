@@ -3,7 +3,7 @@ from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, SelectField, RadioField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
-from corkboardPro.models import user
+from corkboardPro.models import user, category
 
 
 class RegistrationForm(FlaskForm):
@@ -68,7 +68,8 @@ class PostForm(FlaskForm):
 class CorkBoardForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     # category = SelectField('Category', choices=['Education','People','Pets','Sprots','Food& Drink'])
-    category = TextAreaField('Category', validators=[DataRequired()])
+    myChoices = category.query.with_entities(category.cat_name, category.cat_name).all()
+    category = SelectField('Category', choices = myChoices, validators=[DataRequired()])
     # isPublic= BooleanField('Public')
     # isPrivate= BooleanField('Private')
     visibility = RadioField('visibility', choices = [('Public','Public'),('Private','Private')])
