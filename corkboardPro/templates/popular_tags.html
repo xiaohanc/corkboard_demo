@@ -8,26 +8,28 @@
           </div>
         </div>
     </div>
-    
-    <div class="content-section">
+
+     <div class="content-section">
+        <div class="content-section">
         <h6>
-            <strong><u>Tag</u></strong>
-            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-            <u><strong>PushPins</strong></u>
-            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-            <u><strong>Unique CorkBoards</strong></u> 
+            <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th><strong><u>Tag</u></strong></th>
+                        <th><strong>PushPins</strong></th>
+                        <th><strong>Unique CorkBoards</strong></th>
+                      </tr>
+                    </thead>
+
+                    {% for tag in tags %}
+                       <TR>
+                           <tr><TD><a href="{{ url_for('search_result', search_item=tag.tag) }}"><strong><u>{{tag.tag}}</u></strong></a></TD>
+                           <TD>{{tag[1]}}/TD>
+                           <TD>{{tag[2]}}</TD></tr>
+                        </TR>
+                    {% endfor %}
+            </table>
         </h6>
-        {% for tag in tags %}
-            <br>
-            <a href="{{ url_for('search_result', search_item=tag.tag) }}"><strong><u>{{tag.tag}}</u></strong></a>
-            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp   {{tag[1]}}
-            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  {{tag[2]}}
-        {% endfor %}
+        </div>
     </div>
 {% endblock content %}

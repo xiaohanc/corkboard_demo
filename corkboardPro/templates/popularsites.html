@@ -4,15 +4,40 @@
     <div class="content-section">
         <div class="media">
           <div class="media-body">
-            <h2 class="homepage-heading">Popular Sites
+            <h2 class="homepage-heading">Popular Sites </h2>
           </div>
         </div>
     </div>
+
     <div class="content-section">
+         <div class="content-section">
+        <h6>
+        <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th><strong><u>Site</u></strong></th>
+                    <th><strong>PushPins</strong></th>
+                  </tr>
+                </thead>
+
+                 {% for popular_site in popular_sites %}
+                   <TR>
+                       <tr><TD>{{popular_site[0]}}</TD>
+                       <TD>{{popular_site[1]}}</TD></tr>
+                    </TR>
+
+        {% endfor %}
+
+        </table>
+        </h6>
+    </div>
+    </div>
+<!--
+
         <h6>
             <strong><u>Site</u></strong>
             &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-            <u><strong>PushPins</strong></u> 
+            <u><strong>PushPins</strong></u>
         </h6>
         {% for popular_site in popular_sites %}
             <h6>
@@ -20,6 +45,6 @@
             &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
                 &nbsp&nbsp&nbsp&nbsp&nbsp   {{popular_site[1]}}
         {% endfor %}
-    </div>
+    </div> -->
 
 {% endblock content %}

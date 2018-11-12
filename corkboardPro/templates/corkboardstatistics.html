@@ -4,40 +4,36 @@
     <div class="content-section">
         <div class="media">
           <div class="media-body">
-            <h2 class="homepage-heading">CorkBoard Statistics
+            <h2 class="homepage-heading">CorkBoard Statistics> </h2>
           </div>
         </div>
     </div>
     <div class="content-section">
         <h6>
-            <strong><u>User</u></strong>
-            &nbsp&nbsp&nbsp
-            <u><strong>Public CorkBoards</strong></u>
-            &nbsp&nbsp&nbsp
-            <u><strong>Public PushPins</strong></u>
-            &nbsp&nbsp
-            <u><strong>Private CorkBoards</strong></u>
-            &nbsp&nbsp
-            <u><strong>Private PushPins</strong></u>
-        </h6>
-        {% for corkboard_statistic in corkboard_statistics %}
-            <h6>
-            <a><strong><u>{{corkboard_statistic[0]}}</u></strong></a>
-                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-                   {{corkboard_statistic[1]}}   
-                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-                   {{corkboard_statistic[2]}}
-                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-                   {{corkboard_statistic[3]}}
-                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-                   {{corkboard_statistic[4]}}
+        <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Public CorkBoards</th>
+                    <th>Public PushPins</th>
+                    <th>Private CorkBoards</th>
+                    <th>Private PushPins</th>
+                  </tr>
+                </thead>
+
+                 {% for corkboard_statistic in corkboard_statistics %}
+                   <TR>
+                       <tr><TD>{{corkboard_statistic[0]}}</TD>
+                       <TD>{{corkboard_statistic[1]}}</TD>
+                       <TD>{{corkboard_statistic[2]}}</TD>
+                       <TD>{{corkboard_statistic[3]}}</TD>
+                       <TD>{{corkboard_statistic[4]}}</TD></tr>
+                    </TR>
+
         {% endfor %}
+
+        </table>
+        </h6>
     </div>
 
 {% endblock content %}
