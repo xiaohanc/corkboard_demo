@@ -20,7 +20,7 @@
             <p style="float: right"><strong> from {{current_site}}</strong></p>
             <br>
             <br>
-            <img class="mx-auto d-block" src="{{ url_for('static', filename='profile_pics/' + pushpin.image_URL) }}">
+            <img class="img-fluid" src="{{ url_for('static', filename='profile_pics/' + pushpin.image_URL) }}">
             <p class="content"> 
                 {{pushpin.description}}
             </p>
