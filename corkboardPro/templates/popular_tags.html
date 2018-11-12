@@ -15,7 +15,7 @@
             <table class="table table-striped">
                     <thead>
                       <tr>
-                        <th><strong><u>Tag</u></strong></th>
+                        <th><strong>Tag</strong></th>
                         <th><strong>PushPins</strong></th>
                         <th><strong>Unique CorkBoards</strong></th>
                       </tr>
@@ -24,7 +24,7 @@
                     {% for tag in tags %}
                        <TR>
                            <tr><TD><a href="{{ url_for('search_result', search_item=tag.tag) }}"><strong><u>{{tag.tag}}</u></strong></a></TD>
-                           <TD>{{tag[1]}}/TD>
+                           <TD>{{tag[1]}}</TD>
                            <TD>{{tag[2]}}</TD></tr>
                         </TR>
                     {% endfor %}
