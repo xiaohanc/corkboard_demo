@@ -2,14 +2,14 @@
 {% block content %}
     <h1 class="border-bottom mb-5">
         {{ owner.name}}
-        <a  href="{{ url_for('_follow',corkboard_id1= corkboard.corkBoardID) }}"> 
-            <button style="float: right" type="button" class="btn btn-outline-info">follow</button> 
-        </a> 
+        <a  href="{{ url_for('_follow',corkboard_id1= corkboard.corkBoardID) }}">
+            <button style="float: right" type="button" class="btn btn-outline-info">follow</button>
+        </a>
     </h1>
     <div class="content-section">
         <div class="media">
           <div class="media-body">
-            <h2 class="homepage-heading"> {{corkboard.title}} 
+            <h2 class="homepage-heading"> {{corkboard.title}}
                 <span style="float: right" >
                     <font color = "blue"><strong>{{corkboard.cat_name}}</strong></font>
                 </span>
@@ -20,7 +20,7 @@
                 {% if current_user.email== corkboard.email %}
                 <a class="nav-item nav-link" href="{{ url_for('new_pushpin') }}">
                     <button style="float: right" class= "btn btn-outline-info">
-                        Add Pushpin 
+                        Add Pushpin
                     </button>
                 </a>
                 {% endif %}
@@ -30,11 +30,11 @@
         <div class="row">
         {% for pushpin in pushpins %}
         <!--     <h4 class="border-bottom recent-item"> <a href="{{ url_for('pushpins',pushpin_id= pushpin.pushPinID) }}">{{pushpin.image_URL}}</a> -->
-            <h4 class="recent-item"> 
+            <h4 class="recent-item">
                 <div class="col-md-4">
                     <div class="thumbnail">
-                        <a href="{{ url_for('pushpins',pushpin_id= pushpin.pushPinID) }}"> 
-                            <img class="img-responsive" src="{{ url_for('static', filename='profile_pics/' + pushpin.image_URL) }}"  width="300">
+                        <a href="{{ url_for('pushpins',pushpin_id= pushpin.pushPinID) }}">
+                            <img class="img-responsive" src="{{  pushpin.image_URL }}"  width="300">
                         </a>
                     </div>
                 </div>
@@ -46,12 +46,12 @@
           <div class="media-body">
                  <h6> This CorkBoard has {{count_watch}} watchers
                         {% if current_user.email!= corkboard.email and isPrivate==False %}
-                            <a  href="{{ url_for('_watch',corkboard_id1= corkboard.corkBoardID) }}"> 
-                                <button style="float: right" type="button" class="btn btn-outline-info">watch</button> 
-                            </a> 
+                            <a  href="{{ url_for('_watch',corkboard_id1= corkboard.corkBoardID) }}">
+                                <button style="float: right" type="button" class="btn btn-outline-info">watch</button>
+                            </a>
                         {% endif %}
                 </h6>
-                        
+
           </div>
         </div>
 

@@ -4,7 +4,7 @@
     <form method="POST" action="">
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
-            <legend class="border-bottom mb-4">{{ legend }}</legend>
+            <legend class="border-bottom mb-4"> <strong>Add PushPin   </strong> <br> to {{ legend }}</legend>
             <div class="form-group">
                 {{ form.image_URL.label(class="form-control-label") }}
                 {% if form.image_URL.errors %}

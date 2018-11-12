@@ -71,9 +71,9 @@ class CorkBoardForm(FlaskForm):
     submit = SubmitField('Add')
 
 class PushPinForm(FlaskForm):
-    image_URL = StringField('image_URL', validators=[DataRequired()])
-    description = TextAreaField('descritption', validators=[DataRequired()])
-    tags = StringField('tags', validators=[DataRequired()])
+    image_URL = StringField('URL', validators=[DataRequired()])
+    description = TextAreaField('Descritption', validators=[DataRequired()])
+    tags = StringField('Tags', validators=[DataRequired()])
     submit = SubmitField('Add')
 
 class CommentForm(FlaskForm):

@@ -8,29 +8,29 @@
 
             <h2 class="homepage-heading"> {{owner.name}}
                 <a  href="{{ url_for('_follow',corkboard_id1= corkboard.corkBoardID) }}">
-                    <button type="button" class="btn btn-outline-info">follow</button> 
-                </a> 
+                    <button type="button" class="btn btn-outline-info">follow</button>
+                </a>
             </h2>
             </h4>
             <p class="text-secondary"> Pinned by {{current_user.name}} on {{pushpin.pinned_time}} <a href="{{ url_for('corkboards', corkboard_id=corkboard.corkBoardID) }}"> {{corkboard.title}} </a> </p>
 
         </div>
-        
+
         <div class="content-section">
             <p style="float: right"><strong> from {{current_site}}</strong></p>
             <br>
             <br>
-            <img class="img-fluid" src="{{ url_for('static', filename='profile_pics/' + pushpin.image_URL) }}">
-            <p class="content"> 
+            <img class="img-fluid" src="{{  pushpin.image_URL }}" >
+            <p class="content">
                 {{pushpin.description}}
             </p>
 
-             <p> Tags: 
+             <p> Tags:
                {% for tag in tags %}
                <strong> {{tag.tag }} </strong>
                 {%endfor %}
              </p>
-        
+
         </div>
 
         <div class="content-section">
@@ -66,10 +66,10 @@
                         {{ form.submit(class="btn btn-outline-info")  }}
                          </div>
                     {% endif %}
-                </div>  
-                    
-                    
-                
+                </div>
+
+
+
                 <div>
 
                     {% for c in comments %}
@@ -77,7 +77,7 @@
                                 <p class="article-content"><strong>{{ c.name}}</strong>:  {{c.content }}</p>
                     {% endfor %}
 
-                    
+
 
                 </div>
             </fieldset>

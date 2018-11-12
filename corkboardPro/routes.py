@@ -254,8 +254,8 @@ def new_corkboard():
 
         flash('Your Corkboard has been created!', 'success')
         return redirect(url_for('corkboards', corkboard_id=corkBoard1.corkBoardID))
-    return render_template('create_corkboard.html', title='New Corkboard',
-                           form=form, legend='New CorkBoard')
+    return render_template('create_corkboard.html', title='Add Corkboard',
+                           form=form, legend='Add CorkBoard')
 
 
 @app.route("/corkboard/<int:corkboard_id>")
@@ -292,6 +292,7 @@ def new_pushpin():
         """
         last_update_sql = text(update_corkboard_time)
         db.engine.execute(last_update_sql)
+
         corkboardPub = publiccorkboard.query.filter_by(corkBoardID=corkboard_ID).first()
         if corkboardPub:
             update_corkboard_time = """
@@ -309,8 +310,10 @@ def new_pushpin():
         db.engine.execute(last_update_sql)
         flash('Your PushPin has been created!', 'success')
         return redirect( url_for('corkboards', corkboard_id=corkboard_ID))
-    return render_template('create_pushpin.html', title='New PushPin',
-                           form=form, legend='New PushPin')
+    corkboard_ID= session.get('corkID', None)
+    corkboard2 = corkboard.query.filter_by(corkBoardID=corkboard_ID).first()
+    return render_template('create_pushpin.html', title=corkboard2.title,
+                           form=form, legend=corkboard2.title)
 
 
 @app.route("/pushpin/<int:pushpin_id>",  methods=['GET', 'POST'])
