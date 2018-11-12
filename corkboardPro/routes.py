@@ -4,17 +4,12 @@ import secrets
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort, session
 from corkboardPro import app, db, bcrypt
-from corkboardPro.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, CorkBoardForm, PushPinForm, PrivateLoginForm, CommentForm
-from corkboardPro.models import user, Post, corkboard, privatecorkboard, publiccorkboard, pushpin,tag, follow, watch, likes, comment
+from corkboardPro.forms import RegistrationForm, LoginForm, UpdateAccountForm, CorkBoardForm, PushPinForm, PrivateLoginForm, CommentForm
+from corkboardPro.models import user, corkboard, privatecorkboard, publiccorkboard, pushpin,tag, follow, watch, likes, comment
 from flask_login import login_user, current_user, logout_user, login_required
 from sqlalchemy import text, update
 from datetime import datetime
 
-@app.route("/home")
-def home():
-    page = request.args.get('page', 1, type=int)
-    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=5)
-    return render_template('home.html', posts=posts)
 
 @app.route("/")
 @app.route("/home_screen")
@@ -37,7 +32,6 @@ def home_screen():
     WHERE Watch.email='""" + current_user.email + """' and Watch.corkBoardID = corkBoard.corkBoardID and User.email= corkBoard.email)) recent
     ORDER BY recent.last_update DESC LIMIT 4
     """
-    # sql = text(show_recent.replace("\n", ""))
     sql1 = text(show_recent)
     result1 = db.engine.execute(sql1)
     recent_info = []
@@ -61,8 +55,8 @@ def home_screen():
     my_info = []
     for row in result2:
         my_info.append(row)
-
     return render_template('home_screen.html', current_user=current_user, recent_info=recent_info, my_info=my_info)
+
 
 @app.route("/about")
 def about():
@@ -100,8 +94,6 @@ def login():
     return render_template('login.html', title='Login', form=form)
 
 
-
-
 @app.route("/logout")
 def logout():
     logout_user()
@@ -118,7 +110,6 @@ def save_picture(form_picture):
     i = Image.open(form_picture)
     i.thumbnail(output_size)
     i.save(picture_path)
-
     return picture_fn
 
 
@@ -141,68 +132,6 @@ def account():
     image_file = url_for('static', filename='profile_pics/default.jpg')
     return render_template('account.html', title='Account',
                            image_file=image_file, form=form)
-
-
-@app.route("/post/new", methods=['GET', 'POST'])
-@login_required
-def new_post():
-    form = PostForm()
-    if form.validate_on_submit():
-        post = Post(title=form.title.data, content=form.content.data, author=current_user)
-        db.session.add(post)
-        db.session.commit()
-        flash('Your post has been created!', 'success')
-        return redirect(url_for('home'))
-    return render_template('create_post.html', title='New Post',
-                           form=form, legend='New Post')
-
-
-@app.route("/post/<int:post_id>")
-def post(post_id):
-    post = Post.query.get_or_404(post_id)
-    return render_template('post.html', title=post.title, post=post)
-
-
-@app.route("/post/<int:post_id>/update", methods=['GET', 'POST'])
-@login_required
-def update_post(post_id):
-    post = Post.query.get_or_404(post_id)
-    if post.author != current_user:
-        abort(403)
-    form = PostForm()
-    if form.validate_on_submit():
-        post.title = form.title.data
-        post.content = form.content.data
-        db.session.commit()
-        flash('Your post has been updated!', 'success')
-        return redirect(url_for('post', post_id=post.id))
-    elif request.method == 'GET':
-        form.title.data = post.title
-        form.content.data = post.content
-    return render_template('create_post.html', title='Update Post',
-                           form=form, legend='Update Post')
-
-
-@app.route("/post/<int:post_id>/delete", methods=['POST'])
-@login_required
-def delete_post(post_id):
-    post = Post.query.get_or_404(post_id)
-    if post.author != current_user:
-        abort(403)
-    db.session.delete(post)
-    db.session.commit()
-    flash('Your post has been deleted!', 'success')
-    return redirect(url_for('home'))
-
-
-@app.route("/user/<string:username>")
-def user_posts(username):
-    page = request.args.get('page', 1, type=int)
-    user = User.query.filter_by(username=username).first_or_404()
-    posts = Post.query.filter_by(author=user)\
-        .order_by(Post.date_posted.desc())\
-        .paginate(page=page, per_page=5)
-    return render_template('user_posts.html', posts=posts, user=user)
 
 
 @app.route("/populartags")
@@ -240,6 +169,7 @@ def popularsites():
     for row in result1:
         popular_sites.append(row)
     return render_template('popularsites.html', popular_sites=popular_sites)
+
 
 @app.route("/corkboardstatistics")
 @login_required
@@ -302,7 +232,6 @@ def search_result(search_item):
     for row in result1:
         pushpins.append(row)
 
-    # [(1, 'first image', 'image_1_1', 'user1-cork1', 'user1')]
     return render_template('search_results.html', search_item= search_item, pushpins = pushpins)
 
 
@@ -327,15 +256,6 @@ def new_corkboard():
         return redirect(url_for('corkboards', corkboard_id=corkBoard1.corkBoardID))
     return render_template('create_corkboard.html', title='New Corkboard',
                            form=form, legend='New CorkBoard')
-    # form = PostForm()
-    # if form.validate_on_submit():
-    #     post = Post(title=form.title.data, content=form.content.data, author=current_user)
-    #     db.session.add(post)
-    #     db.session.commit()
-    #     flash('Your post has been created!', 'success')
-    #     return redirect(url_for('home'))
-    # return render_template('create_post.html', title='New Post',
-    #                        form=form, legend='New Post')
 
 
 @app.route("/corkboard/<int:corkboard_id>")
@@ -344,12 +264,9 @@ def corkboards(corkboard_id):
     corkboard1 = corkboard.query.get_or_404(corkboard_id)
     session['corkID']= corkboard_id
     pushpins= pushpin.query.filter_by(corkBoardID=corkboard_id).all()
-    #
     isPrivate= True if privatecorkboard.query.filter_by(corkBoardID=corkboard_id).first() else False
-    # pdb.set_trace()
     user1 = user.query.filter_by(email=corkboard1.email).first()
     count_watch = watch.query.filter_by(corkBoardID=corkboard_id).with_entities(watch.email).count()
-
     return render_template('corkboard.html', title=corkboard1.title, corkboard= corkboard1, pushpins=pushpins, owner=user1, isPrivate= isPrivate , count_watch=count_watch)
 
 
@@ -363,15 +280,11 @@ def new_pushpin():
         pushpin1 = pushpin(corkBoardID= corkboard_ID, image_URL=form.image_URL.data, description=form.description.data, pinned_time= time )
         db.session.add(pushpin1)
         db.session.commit()
-
-        # pdb.set_trace()
         tags= form.tags.data.split(',')
         for tag_s in tags:
             tag1 = tag(pushPinID= pushpin1.pushPinID, tag= tag_s)
             db.session.add(tag1)
             db.session.commit()
-
-        # update(corkboard).where(corkBoardID=corkboard_ID).values(last_update=time)
         update_corkboard_time = """
             UPDATE CorkBoard
             SET last_update = NOW()
@@ -379,7 +292,6 @@ def new_pushpin():
         """
         last_update_sql = text(update_corkboard_time)
         db.engine.execute(last_update_sql)
-
         corkboardPub = publiccorkboard.query.filter_by(corkBoardID=corkboard_ID).first()
         if corkboardPub:
             update_corkboard_time = """
@@ -409,9 +321,6 @@ def pushpins(pushpin_id):
     tags= tag.query.filter_by(pushPinID= pushpin_id).all()
     owner= user.query.filter_by(email= corkboard1.email).first()
     comments= comment.query.filter_by(pushPinID= pushpin_id).all()
-
-    # will stop
-
     command = """
                 SELECT name
                 FROM user, likes
@@ -442,7 +351,6 @@ def pushpins(pushpin_id):
     current_sites = []
     for row in current_site:
         current_sites.append(row)
-    
     return render_template('pushpin.html',owner=owner, title=corkboard1.title, corkboard= corkboard1, pushpin=pushpin1, comments=comments, form=form, tags=tags, like=_likes, current_site=current_sites[0]['site'])
 
 
@@ -456,16 +364,14 @@ def privatelogin(corkboard_id):
         else:
             flash('Login Unsuccessful. Please check password', 'danger')
     return render_template('private_login.html', form=form)
-    # return redirect(url_for('corkboards', corkboard_id=corkboard1.corkBoardID))
+
 
 @app.route("/follow/<int:corkboard_id1>")
 @login_required
 def _follow(corkboard_id1):
-    # pdb.set_trace()
     corkboard1 = corkboard.query.filter_by(corkBoardID=corkboard_id1).first()
     owner_id= corkboard1.email
     follow1= follow.query.filter_by(email=current_user.email, owner_email=owner_id).first()
-    # pdb.set_trace()
     if not follow1:
         follow1= follow(email=current_user.email, owner_email=owner_id)
         db.session.add(follow1)
@@ -476,8 +382,6 @@ def _follow(corkboard_id1):
 @app.route("/watch/<int:corkboard_id1>")
 @login_required
 def _watch(corkboard_id1):
-    # pdb.set_trace()
-
     watch1= watch.query.filter_by(email=current_user.email, corkBoardID=corkboard_id1).first()
 
     if not watch1:
@@ -492,8 +396,6 @@ def _watch(corkboard_id1):
 @app.route("/like/<int:pushpin_id1>")
 @login_required
 def _like(pushpin_id1):
-    # pdb.set_trace()
-
     like1= likes.query.filter_by(email=current_user.email, pushPinID=pushpin_id1).first()
 
     if not like1:

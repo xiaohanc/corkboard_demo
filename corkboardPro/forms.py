@@ -59,12 +59,6 @@ class UpdateAccountForm(FlaskForm):
             if user:
                 raise ValidationError('That email is taken. Please choose a different one.')
 
-
-class PostForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired()])
-    content = TextAreaField('Content', validators=[DataRequired()])
-    submit = SubmitField('Post')
-
 class CorkBoardForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     # category = SelectField('Category', choices=['Education','People','Pets','Sprots','Food& Drink'])
@@ -75,12 +69,6 @@ class CorkBoardForm(FlaskForm):
     visibility = RadioField('visibility', choices = [('Public','Public'),('Private','Private')])
     password = TextAreaField('password')
     submit = SubmitField('Add')
-
-    # def validate_password(self, password):
-
-    #     pa= password.data
-    #     if  visibility.data =='Private' and pa=='':
-    #         raise ValidationError('Please enter password')
 
 class PushPinForm(FlaskForm):
     image_URL = StringField('image_URL', validators=[DataRequired()])
