@@ -12,7 +12,9 @@
         <div class="content-section">
             {% if recent.password != None %}
 
-            <h4  class="border-bottom recent-item mb-1"> <a href="{{ url_for('privatelogin', corkboard_id=recent.corkBoardID) }}"> {{recent.title}}  </a> <font color="red"> (Private) </font> </h4>
+            <h4  class="border-bottom recent-item mb-1"> <a href="{{ url_for('privatelogin', corkboard_id=recent.corkBoardID) }}"> 
+                {{recent.title}}  </a> <font color="red"> (Private) </font> 
+            </h4>
 
             {% else %}
             <h4  class="border-bottom recent-item mb-1"> <a href="{{ url_for('corkboards', corkboard_id=recent.corkBoardID) }}"> {{recent.title}} </a> </h4>
@@ -33,10 +35,20 @@
         {% for my_corkboard in my_info %}
             <div class="content-section">
                 {% if my_corkboard.password != None %}
-                    <h4 class="border-bottom recent-item"> <a href="{{ url_for('privatelogin', corkboard_id=my_corkboard.corkBoardID)}}">{{my_corkboard.title}}</a>  <font color="red"> (Private) </font> <font color="black">   </font> </h4>
+                    <h4 class="border-bottom recent-item">
+                         <a href="{{ url_for('privatelogin', corkboard_id=my_corkboard.corkBoardID)}}">
+                             {{my_corkboard.title}}
+                         </a>
+                         <font color="red"> (Private) </font> 
+                         <font color="black"></font> 
+                     </h4>
 
                 {% else%}
-                    <h4 class="border-bottom recent-item"> <a href="{{ url_for('corkboards', corkboard_id=my_corkboard.corkBoardID) }}">{{my_corkboard.title}}</a> </h4>
+                    <h4 class="border-bottom recent-item"> 
+                        <a href="{{ url_for('corkboards', corkboard_id=my_corkboard.corkBoardID) }}">
+                            {{my_corkboard.title}}
+                        </a> 
+                    </h4>
                 {% endif %}
                 with {{my_corkboard[1]}} PushPins
             </h4>

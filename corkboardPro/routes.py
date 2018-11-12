@@ -432,7 +432,18 @@ def pushpins(pushpin_id):
         db.session.add(comment1)
         db.session.commit()
         return redirect( url_for('pushpins', pushpin_id=pushpin_id))
-    return render_template('pushpin.html',owner=owner, title=corkboard1.title, corkboard= corkboard1, pushpin=pushpin1, comments=comments, form=form, tags=tags, like=_likes)
+
+    current_site_sql = """
+    SELECT substring_index(REPLACE(REPLACE(Image_URL, 'https://', ''),'http://', '' ), '/', 1) as site
+    FROM pushpin
+    WHERE pushPinID=""" + str(pushpin_id)
+    site_query = text(current_site_sql)
+    current_site = db.engine.execute(current_site_sql)
+    current_sites = []
+    for row in current_site:
+        current_sites.append(row)
+    
+    return render_template('pushpin.html',owner=owner, title=corkboard1.title, corkboard= corkboard1, pushpin=pushpin1, comments=comments, form=form, tags=tags, like=_likes, current_site=current_sites[0]['site'])
 
 
 @app.route("/Privatelogin/<int:corkboard_id>", methods=['GET', 'POST'])

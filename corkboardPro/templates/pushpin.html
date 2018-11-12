@@ -6,35 +6,42 @@
 
         <div class="content-section">
 
-                <h2 class="homepage-heading"> {{owner.name}} <a  href="{{ url_for('_follow',corkboard_id1= corkboard.corkBoardID) }}"> <button type="button" class="btn btn-primary">follow</button> </a> </h2>
+            <h2 class="homepage-heading"> {{owner.name}}
+                <a  href="{{ url_for('_follow',corkboard_id1= corkboard.corkBoardID) }}">
+                    <button type="button" class="btn btn-outline-info">follow</button> 
+                </a> 
+            </h2>
             </h4>
             <p class="text-secondary"> Pinned by {{current_user.name}} on {{pushpin.pinned_time}} <a href="{{ url_for('corkboards', corkboard_id=corkboard.corkBoardID) }}"> {{corkboard.title}} </a> </p>
 
         </div>
+        
+        <div class="content-section">
+            <p style="float: right"><strong> from {{current_site}}</strong></p>
+            <br>
+            <br>
+            <img class="mx-auto d-block" src="{{ url_for('static', filename='profile_pics/' + pushpin.image_URL) }}">
+            <p class="content"> 
+                {{pushpin.description}}
+            </p>
 
-        <div class="media">
-          <div class="media-body">
-
-            <img class="img-fluid" src="{{ url_for('static', filename='profile_pics/' + pushpin.image_URL) }}">
-            <p class="content"> {{pushpin.description}}</p>
-               <p> tags: {% for tag in tags %}
-                   <strong> {{tag.tag }} </strong>
+             <p> Tags: 
+               {% for tag in tags %}
+               <strong> {{tag.tag }} </strong>
                 {%endfor %}
-                </p>
-          </div>
+             </p>
+        
         </div>
 
-        <div class="media">
-          <div class="media-body">
-                 <h6> liked by
-                        {% for l in like %}
-                         <strong>{{ l.name }} </strong>
-                        {% endfor %}
-                        <a  href="{{ url_for('_like',pushpin_id1= pushpin.pushPinID) }}">
-                            <button style="float: right;" type="button" class="btn btn-primary">like</button>
-                        </a>
-                 </h6>
-          </div>
+        <div class="content-section">
+             <h6> <i class="far fa-thumbs-up"></i>
+                {% for l in like %}
+                 <strong>{{ l.name }},&nbsp </strong>
+                {% endfor %}
+                <a  href="{{ url_for('_like',pushpin_id1= pushpin.pushPinID) }}">
+                    <button style="float: right; line-height:1" type="button" class="btn btn-outline-info">Like!</button>
+                </a>
+             </h6>
         </div>
 
         <form method="POST" action="">
@@ -51,20 +58,26 @@
                             {% endfor %}
                         </div>
                     {% else %}
+                        <br>
+                        <div  style= "width: 70%; display: inline-block;">
                         {{ form.content(class="form-control form-control-lg") }}
+                        </div>
+                        <div  style="float: right; display: inline-block;">
+                        {{ form.submit(class="btn btn-outline-info")  }}
+                         </div>
                     {% endif %}
-
-
+                </div>  
+                    
+                    
+                
+                <div>
 
                     {% for c in comments %}
 
-                                <p class="article-content">{{ c.name}}:  {{c.content }}</p>
+                                <p class="article-content"><strong>{{ c.name}}</strong>:  {{c.content }}</p>
                     {% endfor %}
 
-
-                    <div class="form-group">
-                    {{ form.submit(class="btn btn-outline-info")  }}
-                     </div>
+                    
 
                 </div>
             </fieldset>
