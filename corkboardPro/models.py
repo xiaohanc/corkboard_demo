@@ -34,9 +34,9 @@ class privatecorkboard(db.Model):
     password = db.Column(db.String(250), nullable=False)
     last_update= db.Column(db.DateTime, nullable=True)
 
-class publiccorkboard(db.Model):
-    corkBoardID= db.Column(db.Integer, db.ForeignKey('corkboard.corkBoardID'), primary_key=True)
-    last_update= db.Column(db.DateTime, nullable=True)
+# class publiccorkboard(db.Model):
+#     corkBoardID= db.Column(db.Integer, db.ForeignKey('corkboard.corkBoardID'), primary_key=True)
+#     last_update= db.Column(db.DateTime, nullable=True)
 
 class pushpin(db.Model):
     pushPinID = db.Column(db.Integer, primary_key=True)

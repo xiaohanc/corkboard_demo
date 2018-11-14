@@ -5,7 +5,7 @@ from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort, session
 from corkboardPro import app, db, bcrypt
 from corkboardPro.forms import RegistrationForm, LoginForm, UpdateAccountForm, CorkBoardForm, PushPinForm, PrivateLoginForm, CommentForm
-from corkboardPro.models import user, corkboard, privatecorkboard, publiccorkboard, pushpin,tag, follow, watch, likes, comment
+from corkboardPro.models import user, corkboard, privatecorkboard,  pushpin,tag, follow, watch, likes, comment
 from flask_login import login_user, current_user, logout_user, login_required
 from sqlalchemy import text, update
 from datetime import datetime
@@ -24,8 +24,8 @@ def home_screen():
     WHERE Follow.email= '""" + current_user.email + """' AND Follow.owner_email=CorkBoard.email and PrivateCorkboard.corkBoardID=Corkboard.corkBoardID and User.email= Follow.owner_email)
     UNION
     (SELECT CorkBoard.corkBoardID, CorkBoard.email, CorkBoard.cat_name, CorkBoard.title, CorkBoard.last_update, NULL as password, User.name
-    FROM Follow, CorkBoard, PublicCorkboard, User
-    WHERE Follow.email= '""" + current_user.email + """' AND Follow.owner_email=CorkBoard.email and PublicCorkboard.corkBoardID=Corkboard.corkBoardID and User.email= Follow.owner_email)
+    FROM Follow, CorkBoard, User
+    WHERE Follow.email= '""" + current_user.email + """' AND Follow.owner_email=CorkBoard.email and User.email= Follow.owner_email and Corkboard.corkBoardID not in (SELECT corkBoardID from PrivateCorkboard))
     UNION
     (SELECT CorkBoard.corkBoardID,corkBoard.email, CorkBoard.cat_name, CorkBoard.title, CorkBoard.last_update, NULL as password, User.name
     FROM Watch, corkBoard, User
@@ -41,8 +41,6 @@ def home_screen():
     show_my_info = """
     SELECT t0.corkBoardID, COUNT(t3.pushPinID), t0.title, t2.password FROM
         (SELECT * FROM CorkBoard WHERE CorkBoard.email = '""" + current_user.email + """' ) t0
-        LEFT JOIN
-        (SELECT * FROM PublicCorkboard) t1 on t0.corkBoardID= t1.corkBoardID
         LEFT JOIN
         (SELECT * FROM PrivateCorkboard) t2 on t0.corkBoardID= t2.corkBoardID
         LEFT JOIN
@@ -178,12 +176,12 @@ def corkboardstatistics():
     SELECT t0.name, IFNULL(Public_CorkBoards, 0 ), IFNULL(Public_PushPins, 0 ),IFNULL(Private_CorkBoards, 0 ), IFNULL(Private_PushPins, 0 ) From
     (SELECT email, name from user) t0
     LEFT JOIN
-    (SELECT email, count(*) as Public_CorkBoards FROM `corkboard` c, publiccorkboard p where c.corkBoardID=p.corkBoardID group by email) t4 on t0.email= t4.email
+    (SELECT email, count(*) as Public_CorkBoards FROM `corkboard` c where c.corkBoardID not in (SELECT corkBoardID from PrivateCorkboard) group by email) t4 on t0.email= t4.email
     LEFT JOIN
     (SELECT email, Public_PushPins from
-            (SELECT User.email, Count(DISTINCT corkboard.CorkBoardID) AS Public_CorkBoards, Count(Pushpin.pushPinID ) AS Public_PushPins
-            FROM  (USER Inner JOIN (PublicCorkboard INNER JOIN Corkboard on PublicCorkboard.CorkboardID= Corkboard.CorkboardID) on User.email= Corkboard.email Inner Join PushPin on Corkboard.CorkboardID=PushPin.CorkboardID )
-            group by user.email) as a) t1 on t0.email=t1.email
+            (SELECT User.email, Count(DISTINCT t.CorkBoardID) AS Public_CorkBoards, Count(Pushpin.pushPinID ) AS Public_PushPins
+            FROM  (USER Inner JOIN(SELECT * from corkboard where corkboard.corkBoardID not in (SELECT corkBoardID from PrivateCorkboard)) t on User.email= t.email Inner Join PushPin on t.CorkboardID=PushPin.CorkboardID )
+    group by user.email) as a) t1 on t0.email=t1.email
     LEFT JOIN
     (SELECT email, count(*) as Private_CorkBoards FROM `corkboard` c, privatecorkboard pr where c.corkBoardID=pr.corkBoardID group by email) t5 on t0.email= t5.email
     LEFT JOIN
@@ -193,7 +191,7 @@ def corkboardstatistics():
             group by user.email) as b) t2
     on t0.email=t2.email
     ORDER BY Public_CorkBoards DESC, Private_CorkBoards DESC, Private_CorkBoards DESC, Private_PushPins DESC;
-    SELECT email, count(*) FROM `corkboard` c, publiccorkboard p where c.corkBoardID=p.corkBoardID group by email;
+    SELECT email, count(*) FROM `corkboard` c where c.corkBoardID not in (SELECT corkBoardID from PrivateCorkboard) group by email;
     """
     sql1 = text(corkboardstatistics)
     result1 = db.engine.execute(sql1)
@@ -247,10 +245,10 @@ def new_corkboard():
             pricorkBoard1= privatecorkboard(corkBoardID= corkBoard1.corkBoardID, password= form.password.data, last_update= None)
             db.session.add(pricorkBoard1)
             db.session.commit()
-        else:
-            pubcorkBoard1= publiccorkboard(corkBoardID= corkBoard1.corkBoardID, last_update= None)
-            db.session.add(pubcorkBoard1)
-            db.session.commit()
+        # else:
+        #     pubcorkBoard1= publiccorkboard(corkBoardID= corkBoard1.corkBoardID, last_update= None)
+        #     db.session.add(pubcorkBoard1)
+        #     db.session.commit()
 
         flash('Your Corkboard has been created!', 'success')
         return redirect(url_for('corkboards', corkboard_id=corkBoard1.corkBoardID))
@@ -293,14 +291,15 @@ def new_pushpin():
         last_update_sql = text(update_corkboard_time)
         db.engine.execute(last_update_sql)
 
-        corkboardPub = publiccorkboard.query.filter_by(corkBoardID=corkboard_ID).first()
-        if corkboardPub:
-            update_corkboard_time = """
-                UPDATE publiccorkboard
-                SET last_update = NOW()
-                WHERE corkBoardID = """ + str(corkboard_ID) + """;
-                """
-        else:
+        corkboardPri = privatecorkboard.query.filter_by(corkBoardID=corkboard_ID).first()
+        # if corkboardPub:
+        #     update_corkboard_time = """
+        #         UPDATE publiccorkboard
+        #         SET last_update = NOW()
+        #         WHERE corkBoardID = """ + str(corkboard_ID) + """;
+        #         """
+        # else:
+        if corkboardPri:
             update_corkboard_time = """
                 UPDATE privatecorkboard
                 SET last_update = NOW()
