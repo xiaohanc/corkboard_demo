@@ -337,6 +337,13 @@ def pushpins(pushpin_id):
             """
     last_query_sql = text(command)
     comments = db.engine.execute(last_query_sql)
+
+    # add is_like to define current user already liked the pushpin or not
+    if likes.query.filter_by(email=current_user.email, pushPinID=pushpin_id).first():
+        is_like = True
+    else:
+        is_like = False
+
     form= CommentForm()
     if form.validate_on_submit():
         comment1= comment(email=current_user.email, content= form.content.data, pushPinID= pushpin_id, added_time= datetime.utcnow())
@@ -353,7 +360,7 @@ def pushpins(pushpin_id):
     current_sites = []
     for row in current_site:
         current_sites.append(row)
-    return render_template('pushpin.html',owner=owner, title=corkboard1.title, corkboard= corkboard1, pushpin=pushpin1, comments=comments, form=form, tags=tags, like=_likes, current_site=current_sites[0]['site'])
+    return render_template('pushpin.html',owner=owner, title=corkboard1.title, corkboard= corkboard1, pushpin=pushpin1, comments=comments, form=form, tags=tags, like=_likes, current_site=current_sites[0]['site'], is_like=is_like)
 
 
 @app.route("/Privatelogin/<int:corkboard_id>", methods=['GET', 'POST'])
@@ -403,6 +410,9 @@ def _like(pushpin_id1):
     if not like1:
         like1= likes(email=current_user.email, pushPinID=pushpin_id1)
         db.session.add(like1)
+        db.session.commit()
+    else:
+        db.session.delete(like1)
         db.session.commit()
 
     return redirect(url_for('pushpins',pushpin_id=pushpin_id1))

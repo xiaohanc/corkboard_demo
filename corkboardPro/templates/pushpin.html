@@ -7,9 +7,11 @@
         <div class="content-section">
 
             <h2 class="homepage-heading"> {{owner.name}}
-                <a  href="{{ url_for('_follow',corkboard_id1= corkboard.corkBoardID) }}">
-                    <button type="button" class="btn btn-outline-info">follow</button>
-                </a>
+                {% if owner.email != current_user.email %}
+                    <a  href="{{ url_for('_follow',corkboard_id1= corkboard.corkBoardID) }}">
+                        <button type="button" class="btn btn-outline-info">follow</button>
+                    </a>
+                {% endif %}
             </h2>
             </h4>
             <p class="text-secondary"> Pinned by {{current_user.name}} on {{pushpin.pinned_time}} <a href="{{ url_for('corkboards', corkboard_id=corkboard.corkBoardID) }}"> {{corkboard.title}} </a> </p>
@@ -38,9 +40,15 @@
                 {% for l in like %}
                  <strong>{{ l.name }},&nbsp </strong>
                 {% endfor %}
-                <a  href="{{ url_for('_like',pushpin_id1= pushpin.pushPinID) }}">
-                    <button style="float: right; line-height:1" type="button" class="btn btn-outline-info">Like!</button>
-                </a>
+                {% if owner.email != current_user.email %}
+                    <a  href="{{ url_for('_like',pushpin_id1= pushpin.pushPinID) }}">
+                        {% if is_like %}
+                            <button style="float: right; line-height:1" type="button" class="btn btn-outline-info">Unlike!</button>
+                        {% else %}
+                            <button style="float: right; line-height:1" type="button" class="btn btn-outline-info">Like!</button>
+                        {% endif %}
+                    </a>
+                {% endif %}
              </h6>
         </div>
 
@@ -67,23 +75,12 @@
                          </div>
                     {% endif %}
                 </div>
-
-
-
                 <div>
-
                     {% for c in comments %}
-
-                                <p class="article-content"><strong>{{ c.name}}</strong>:  {{c.content }}</p>
+                        <p class="article-content"><strong>{{ c.name}}</strong>:  {{c.content }}</p>
                     {% endfor %}
-
-
-
                 </div>
             </fieldset>
-
         </form>
-
-
     </div>
 {% endblock content %}
