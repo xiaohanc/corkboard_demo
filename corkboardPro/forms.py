@@ -72,7 +72,7 @@ class CorkBoardForm(FlaskForm):
 
 class PushPinForm(FlaskForm):
     image_URL = StringField('URL', validators=[DataRequired()])
-    description = TextAreaField('Descritption', validators=[DataRequired()])
+    description = TextAreaField('Descritption', validators=[DataRequired(), Length(min=1, max=200)])
     tags = StringField('Tags', validators=[DataRequired()])
     submit = SubmitField('Add')
     
