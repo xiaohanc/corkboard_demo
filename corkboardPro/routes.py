@@ -285,9 +285,12 @@ def new_pushpin():
         db.session.commit()
         tags= form.tags.data.split(',')
         for tag_s in tags:
-            tag1 = tag(pushPinID= pushpin1.pushPinID, tag= tag_s)
-            db.session.add(tag1)
-            db.session.commit()
+            if len(tag_s)>20:
+                flash('The tag should have less than 20 characters!', 'danger')
+            else:
+                tag1 = tag(pushPinID= pushpin1.pushPinID, tag= tag_s)
+                db.session.add(tag1)
+                db.session.commit()
         update_corkboard_time = """
             UPDATE CorkBoard
             SET last_update = NOW()

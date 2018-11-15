@@ -12,7 +12,7 @@ class user(db.Model,UserMixin):
 
     userID = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(250), unique=True, nullable=False)
-    pin = db.Column(db.String(60), nullable=False)
+    pin = db.Column(db.String(4), nullable=False)
     name = db.Column(db.String(100), nullable=False)
 
     def __repr__(self):
@@ -42,13 +42,13 @@ class pushpin(db.Model):
     pushPinID = db.Column(db.Integer, primary_key=True)
     corkBoardID=  db.Column(db.Integer, db.ForeignKey('corkboard.corkBoardID'), nullable=False )
     image_URL= db.Column(db.String(250), nullable=False)
-    description = db.Column(db.String(250), nullable=False)
+    description = db.Column(db.String(200), nullable=False)
     pinned_time = db.Column(db.DateTime, nullable=True)
 
 class tag(db.Model):
     tagID = db.Column(db.Integer, primary_key=True)
     pushPinID=  db.Column(db.Integer, db.ForeignKey('pushpin.pushPinID'), nullable=False)
-    tag = db.Column(db.String(250), nullable=False)
+    tag = db.Column(db.String(20), nullable=False)
 
 class follow(db.Model):
     followID = db.Column(db.Integer, primary_key=True)
