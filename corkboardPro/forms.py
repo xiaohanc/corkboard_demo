@@ -67,7 +67,7 @@ class CorkBoardForm(FlaskForm):
     # isPublic= BooleanField('Public')
     # isPrivate= BooleanField('Private')
     visibility = RadioField('visibility', choices = [('Public','Public'),('Private','Private')])
-    password = TextAreaField('password')
+    password = PasswordField('password')
     submit = SubmitField('Add')
 
 class PushPinForm(FlaskForm):

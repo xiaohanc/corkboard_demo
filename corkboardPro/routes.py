@@ -214,8 +214,9 @@ def search():
 
 
 @app.route("/search/<string:search_item>")
+@app.route("/search/")
 @login_required
-def search_result(search_item):
+def search_result(search_item=""):
     search_query = """
     SELECT pushPin.pushPinID, pushPin.Description, pushPin.Image_URL, corkBoard.Title, User.name
     FROM PushPin, CorkBoard, User, PrivateCorkBoard

@@ -10,15 +10,28 @@
     </div>
     
     <div class="content-section">
-        <p>
-            <strong><u>PushPin Description</u></strong>
-            <u><strong>CorkBoard</strong></u>
-            <u><strong>Owner</strong></u> 
-        </p>
+        <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>
+                <strong><u>PushPin Description</u></strong>
+            </th>
+            <th>
+                <u><strong>CorkBoard</strong></u>
+            </th>
+            <th>
+                <u><strong>Owner</strong></u> 
+            </th>
+        </tr>
+        </thead>
         {% for pushpin in pushpins %}
-            <br>
-            <a href="{{ url_for('pushpins',pushpin_id= pushpin.pushPinID) }}"><strong><u>{{pushpin.Description}}</u></strong></a>
-                &nbsp&nbsp&nbsp&nbsp&nbsp   {{pushpin.Title}}   &nbsp&nbsp&nbsp&nbsp&nbsp  {{pushpin.name}}
+            <tr>
+            <td><a href="{{ url_for('pushpins',pushpin_id= pushpin.pushPinID) }}"><strong><u>{{pushpin.Description}}</u></strong></a></td>
+            <td>{{pushpin.Title}}</td>
+            <td>  {{pushpin.name}}</td>
+            </tr>
         {% endfor %}
+            
+        </table>
     </div>
 {% endblock content %}
