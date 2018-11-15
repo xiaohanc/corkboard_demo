@@ -1,0 +1,2 @@
+The SQL queries are located at corkboardPro/routes.py
+The SQL Tables are defined at corkboardPro/models.py
