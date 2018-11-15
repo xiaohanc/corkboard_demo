@@ -75,6 +75,12 @@ class PushPinForm(FlaskForm):
     description = TextAreaField('Descritption', validators=[DataRequired()])
     tags = StringField('Tags', validators=[DataRequired()])
     submit = SubmitField('Add')
+    
+    def validate_tags(self, tags):
+        tags_list = tags.data.strip(" ").split(',')
+        for tag in tags_list:
+            if len(tag) >= 20:
+                raise ValidationError('Each tag length should limit 20 characters.')
 
 class CommentForm(FlaskForm):
     content = StringField('Content', validators=[DataRequired()])

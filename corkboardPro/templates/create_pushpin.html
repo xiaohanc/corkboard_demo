@@ -39,7 +39,7 @@
                 {% if form.tags.errors %}
                     {{ form.tags(class="form-control form-control-lg is-invalid") }}
                     <div class="invalid-feedback">
-                        {% for error in form.password.errors %}
+                        {% for error in form.tags.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
                     </div>
