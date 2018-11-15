@@ -218,16 +218,16 @@ def search():
 def search_result(search_item):
     search_query = """
     SELECT pushPin.pushPinID, pushPin.Description, pushPin.Image_URL, corkBoard.Title, User.name
-    FROM PushPin, CorkBoard, User
-    WHERE CorkBoard.cat_name LIKE '%""" + search_item + """%' and PushPin.corkBoardID = CorkBoard.corkBoardID and CorkBoard.email = User.email
+    FROM PushPin, CorkBoard, User, PrivateCorkBoard
+    WHERE CorkBoard.cat_name LIKE '%""" + search_item + """%' and PushPin.corkBoardID = CorkBoard.corkBoardID and CorkBoard.email = User.email and PushPin.corkBoardID not in (SELECT corkBoardID from PrivateCorkboard)
     Union
     SELECT pushPin.pushPinID, PushPin.Description, PushPin.Image_URL, CorkBoard.Title, User.name
     FROM PushPin, CorkBoard, User
-    WHERE PushPin.description LIKE '%""" + search_item + """%' and PushPin.corkBoardID = CorkBoard.corkBoardID and CorkBoard.email = User.email
+    WHERE PushPin.description LIKE '%""" + search_item + """%' and PushPin.corkBoardID = CorkBoard.corkBoardID and CorkBoard.email = User.email and PushPin.corkBoardID not in (SELECT corkBoardID from PrivateCorkboard)
     Union
     SELECT pushPin.pushPinID, PushPin.Description, PushPin.Image_URL, CorkBoard.Title, User.name
     FROM Tag, PushPin, CorkBoard, User
-    WHERE Tag.tag LIKE '%""" + search_item + """%' and Tag.pushPinID = PushPin.pushPinID and PushPin.corkBoardID = CorkBoard.corkBoardID and CorkBoard.email = User.email
+    WHERE Tag.tag LIKE '%""" + search_item + """%' and Tag.pushPinID = PushPin.pushPinID and PushPin.corkBoardID = CorkBoard.corkBoardID and CorkBoard.email = User.email and PushPin.corkBoardID not in (SELECT corkBoardID from PrivateCorkboard)
     """
     sql1 = text(search_query)
     result1 = db.engine.execute(sql1)
