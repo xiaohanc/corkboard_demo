@@ -61,11 +61,8 @@ class UpdateAccountForm(FlaskForm):
 
 class CorkBoardForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
-    # category = SelectField('Category', choices=['Education','People','Pets','Sprots','Food& Drink'])
     myChoices = category.query.with_entities(category.cat_name, category.cat_name).all()
     category = SelectField('Category', choices = myChoices, validators=[DataRequired()])
-    # isPublic= BooleanField('Public')
-    # isPrivate= BooleanField('Private')
     visibility = RadioField('visibility', choices = [('Public','Public'),('Private','Private')])
     password = PasswordField('password')
     submit = SubmitField('Add')
@@ -75,7 +72,7 @@ class PushPinForm(FlaskForm):
     description = TextAreaField('Descritption', validators=[DataRequired(), Length(min=1, max=200)])
     tags = StringField('Tags', validators=[DataRequired()])
     submit = SubmitField('Add')
-    
+
     def validate_tags(self, tags):
         tags_list = tags.data.strip(" ").split(',')
         for tag in tags_list:

@@ -214,9 +214,8 @@ def search():
 
 
 @app.route("/search/<string:search_item>")
-@app.route("/search/")
 @login_required
-def search_result(search_item=""):
+def search_result(search_item):
     search_query = """
     SELECT pushPin.pushPinID, pushPin.Description, pushPin.Image_URL, corkBoard.Title, User.name
     FROM PushPin, CorkBoard, User, PrivateCorkBoard
@@ -251,11 +250,6 @@ def new_corkboard():
             pricorkBoard1= privatecorkboard(corkBoardID= corkBoard1.corkBoardID, password= form.password.data, last_update= None)
             db.session.add(pricorkBoard1)
             db.session.commit()
-        # else:
-        #     pubcorkBoard1= publiccorkboard(corkBoardID= corkBoard1.corkBoardID, last_update= None)
-        #     db.session.add(pubcorkBoard1)
-        #     db.session.commit()
-
         flash('Your Corkboard has been created!', 'success')
         return redirect(url_for('corkboards', corkboard_id=corkBoard1.corkBoardID))
     return render_template('create_corkboard.html', title='Add Corkboard',
@@ -301,13 +295,6 @@ def new_pushpin():
         db.engine.execute(last_update_sql)
 
         corkboardPri = privatecorkboard.query.filter_by(corkBoardID=corkboard_ID).first()
-        # if corkboardPub:
-        #     update_corkboard_time = """
-        #         UPDATE publiccorkboard
-        #         SET last_update = NOW()
-        #         WHERE corkBoardID = """ + str(corkboard_ID) + """;
-        #         """
-        # else:
         if corkboardPri:
             update_corkboard_time = """
                 UPDATE privatecorkboard
