@@ -70,7 +70,8 @@ class CorkBoardForm(FlaskForm):
 class PushPinForm(FlaskForm):
     image_URL = StringField('URL', validators=[DataRequired()])
     description = TextAreaField('Descritption', validators=[DataRequired(), Length(min=1, max=200)])
-    tags = StringField('Tags', validators=[DataRequired()])
+    # tags = StringField('Tags', validators=[DataRequired()])
+    tags = StringField('Tags')
     submit = SubmitField('Add')
 
     def validate_tags(self, tags):

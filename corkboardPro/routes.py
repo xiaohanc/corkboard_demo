@@ -282,7 +282,7 @@ def new_pushpin():
         for tag_s in tags:
             if len(tag_s)>20:
                 flash('The tag should have less than 20 characters!', 'danger')
-            else:
+            elif tag_s!='':
                 tag1 = tag(pushPinID= pushpin1.pushPinID, tag= tag_s)
                 db.session.add(tag1)
                 db.session.commit()
@@ -356,7 +356,21 @@ def pushpins(pushpin_id):
     current_sites = []
     for row in current_site:
         current_sites.append(row)
-    return render_template('pushpin.html',owner=owner, title=corkboard1.title, corkboard= corkboard1, pushpin=pushpin1, comments=comments, form=form, tags=tags, like=_likes, current_site=current_sites[0]['site'], is_like=is_like)
+
+    like_str=[]
+    for i in _likes:
+        like_str.append(i.name)
+    if len(like_str)==0:
+        likes_s=''
+    elif len(like_str)==1:
+        likes_s=like_str[0]
+    # elif len(like_str)==2:
+    #     like_s= like_str[0] + ' and '+ like_str[1]
+    else:
+        likes_s= ', '.join(like_str[:-1])+ ' and '+ like_str[1]
+
+    # pdb.set_trace()
+    return render_template('pushpin.html',owner=owner, title=corkboard1.title, corkboard= corkboard1, pushpin=pushpin1, comments=comments, form=form, tags=tags, like=_likes, current_site=current_sites[0]['site'], is_like=is_like, sss=likes_s)
 
 
 @app.route("/Privatelogin/<int:corkboard_id>", methods=['GET', 'POST'])

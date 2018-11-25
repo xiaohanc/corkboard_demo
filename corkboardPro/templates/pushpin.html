@@ -37,9 +37,13 @@
 
         <div class="content-section">
              <h6> <i class="far fa-thumbs-up"></i>
-                {% for l in like %}
-                 <strong>{{ l.name }},&nbsp </strong>
+<!--                 {% for l in like %}
+                 <strong>{{ l.name }} &nbsp </strong>
                 {% endfor %}
+                 -->
+                {% if sss!='' %}
+                    <strong>{{ sss }} &nbsp </strong>
+                {% endif %}
                 {% if owner.email != current_user.email %}
                     <a  href="{{ url_for('_like',pushpin_id1= pushpin.pushPinID) }}">
                         {% if is_like %}
