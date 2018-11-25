@@ -195,7 +195,7 @@ def corkboardstatistics():
             FROM  (USER Inner JOIN (PrivateCorkBoard INNER JOIN Corkboard on PrivateCorkBoard.CorkboardID= Corkboard.CorkboardID) on User.email= Corkboard.email Inner Join PushPin on Corkboard.CorkboardID=PushPin.CorkboardID )
             group by user.email) as b) t2
     on t0.email=t2.email
-    ORDER BY Public_CorkBoards DESC, Private_CorkBoards DESC, Private_CorkBoards DESC, Private_PushPins DESC;
+    ORDER BY Public_CorkBoards DESC, Private_CorkBoards DESC, Public_PushPins DESC, Private_PushPins DESC;
     SELECT email, count(*) FROM `corkboard` c where c.corkBoardID not in (SELECT corkBoardID from PrivateCorkboard) group by email;
     """
     sql1 = text(corkboardstatistics)
