@@ -195,7 +195,7 @@ def corkboardstatistics():
             FROM  (USER Inner JOIN (PrivateCorkBoard INNER JOIN Corkboard on PrivateCorkBoard.CorkboardID= Corkboard.CorkboardID) on User.email= Corkboard.email Inner Join PushPin on Corkboard.CorkboardID=PushPin.CorkboardID )
             group by user.email) as b) t2
     on t0.email=t2.email
-    ORDER BY Public_CorkBoards DESC, Private_CorkBoards DESC, Private_CorkBoards DESC, Private_PushPins DESC;
+    ORDER BY Public_CorkBoards DESC, Private_CorkBoards DESC, Public_PushPins DESC, Private_PushPins DESC;
     SELECT email, count(*) FROM `corkboard` c where c.corkBoardID not in (SELECT corkBoardID from PrivateCorkboard) group by email;
     """
     sql1 = text(corkboardstatistics)
@@ -212,10 +212,10 @@ def search():
     search_item = request.args['search_item']
     return redirect(url_for('search_result', search_item=search_item))
 
-
+@app.route("/search/")
 @app.route("/search/<string:search_item>")
 @login_required
-def search_result(search_item):
+def search_result(search_item=""):
     search_query = """
     SELECT pushPin.pushPinID, pushPin.Description, pushPin.Image_URL, corkBoard.Title, User.name
     FROM PushPin, CorkBoard, User, PrivateCorkBoard
@@ -364,12 +364,8 @@ def pushpins(pushpin_id):
         likes_s=''
     elif len(like_str)==1:
         likes_s=like_str[0]
-    # elif len(like_str)==2:
-    #     like_s= like_str[0] + ' and '+ like_str[1]
     else:
-        likes_s= ', '.join(like_str[:-1])+ ' and '+ like_str[1]
-
-    # pdb.set_trace()
+        likes_s= ', '.join(like_str[:-1])+ ' and '+ like_str[-1]
     return render_template('pushpin.html',owner=owner, title=corkboard1.title, corkboard= corkboard1, pushpin=pushpin1, comments=comments, form=form, tags=tags, like=_likes, current_site=current_sites[0]['site'], is_like=is_like, sss=likes_s)
 
 

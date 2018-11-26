@@ -22,15 +22,27 @@
                 </thead>
 
                  {% for corkboard_statistic in corkboard_statistics %}
-                   <TR>
-                       <tr><TD>{{corkboard_statistic[0]}}</TD>
-                       <TD>{{corkboard_statistic[1]}}</TD>
-                       <TD>{{corkboard_statistic[2]}}</TD>
-                       <TD>{{corkboard_statistic[3]}}</TD>
-                       <TD>{{corkboard_statistic[4]}}</TD></tr>
-                    </TR>
 
-        {% endfor %}
+                    {% if current_user.name!= corkboard_statistic[0] %}
+                       <TR>
+                           <tr><TD>{{corkboard_statistic[0]}}</TD>
+                           <TD>{{corkboard_statistic[1]}}</TD>
+                           <TD>{{corkboard_statistic[2]}}</TD>
+                           <TD>{{corkboard_statistic[3]}}</TD>
+                           <TD>{{corkboard_statistic[4]}}</TD></tr>
+                        </TR>
+                    {% else %}
+                       <TR>
+                           <tr><TD><font color="red">{{corkboard_statistic[0]}}</font></TD>
+                           <TD><font color="red">{{corkboard_statistic[1]}}</font></TD>
+                           <TD><font color="red">{{corkboard_statistic[2]}}</font></TD>
+                           <TD><font color="red">{{corkboard_statistic[3]}}</font></TD>
+                           <TD><font color="red">{{corkboard_statistic[4]}}</font></TD></tr>
+                        </TR>
+
+                    {% endif %}
+
+                {% endfor %}
 
         </table>
         </h6>
