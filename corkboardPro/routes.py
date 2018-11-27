@@ -45,7 +45,7 @@ def home_screen():
         LEFT JOIN
         (SELECT * FROM pushpin) t3 on t0.corkBoardID= t3.corkBoardID
         group by t0.corkBoardID
-        order by t0.last_update DESC
+        order by  t0.title
     """
     sql2 = text(show_my_info)
     result2 = db.engine.execute(sql2)
