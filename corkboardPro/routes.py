@@ -4,7 +4,7 @@ from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort, session
 from corkboardPro import app, db, bcrypt
 from corkboardPro.forms import RegistrationForm, LoginForm, UpdateAccountForm, CorkBoardForm, PushPinForm, PrivateLoginForm, CommentForm
-from corkboardPro.models import user, corkboard, privatecorkboard,  pushpin,tag, follow, watch, likes, comment
+from corkboardPro.models import user, corkboard, privatecorkboard,  pushpin, tag, follow, watch, likes, comment
 from flask_login import login_user, current_user, logout_user, login_required
 from sqlalchemy import text, update
 from datetime import datetime
@@ -28,7 +28,15 @@ def home_screen():
     UNION
     (SELECT CorkBoard.corkBoardID,corkBoard.email, CorkBoard.cat_name, CorkBoard.title, CorkBoard.last_update, NULL as password, User.name
     FROM Watch, corkBoard, User
-    WHERE Watch.email='""" + current_user.email + """' and Watch.corkBoardID = corkBoard.corkBoardID and User.email= corkBoard.email)) recent
+    WHERE Watch.email='""" + current_user.email + """' and Watch.corkBoardID = corkBoard.corkBoardID and User.email= corkBoard.email)
+    UNION
+    (SELECT CorkBoard.corkBoardID,corkBoard.email, CorkBoard.cat_name, CorkBoard.title, CorkBoard.last_update, PrivateCorkboard.password, User.name
+    FROM corkBoard, PrivateCorkboard, User
+    WHERE corkBoard.email='""" + current_user.email + """' and PrivateCorkboard.corkboardID=Corkboard.corkboardID and User.email= corkBoard.email)
+    UNION
+    (SELECT CorkBoard.corkBoardID,corkBoard.email, CorkBoard.cat_name, CorkBoard.title, CorkBoard.last_update, NULL as password, User.name
+    FROM corkBoard, User
+    WHERE corkBoard.email='""" + current_user.email + """' and User.email= corkBoard.email and Corkboard.corkBoardID not in (SELECT corkBoardID from PrivateCorkboard))) recent
     ORDER BY recent.last_update DESC LIMIT 4
     """
     sql1 = text(show_recent)
@@ -44,8 +52,8 @@ def home_screen():
         (SELECT * FROM PrivateCorkboard) t2 on t0.corkBoardID= t2.corkBoardID
         LEFT JOIN
         (SELECT * FROM pushpin) t3 on t0.corkBoardID= t3.corkBoardID
-        group by t0.corkBoardID
-        order by  t0.title
+        GROUP BY t0.corkBoardID
+        ORDER BY t0.title
     """
     sql2 = text(show_my_info)
     result2 = db.engine.execute(sql2)
@@ -217,17 +225,20 @@ def search():
 @login_required
 def search_result(search_item=""):
     search_query = """
-    SELECT pushPin.pushPinID, pushPin.Description, pushPin.Image_URL, corkBoard.Title, User.name
+    SELECT Result.pushPinID, Result.Description, Result.Image_URL, Result.Title, Result.name
+    FROM
+    ((SELECT PushPin.pushPinID, PushPin.Description, PushPin.Image_URL, corkBoard.Title, User.name
     FROM PushPin, CorkBoard, User, PrivateCorkBoard
-    WHERE CorkBoard.cat_name LIKE '%""" + search_item + """%' and PushPin.corkBoardID = CorkBoard.corkBoardID and CorkBoard.email = User.email and PushPin.corkBoardID not in (SELECT corkBoardID from PrivateCorkboard)
+    WHERE CorkBoard.cat_name LIKE '%""" + search_item + """%' and PushPin.corkBoardID = CorkBoard.corkBoardID and CorkBoard.email = User.email and PushPin.corkBoardID not in (SELECT corkBoardID from PrivateCorkboard))
     Union
-    SELECT pushPin.pushPinID, PushPin.Description, PushPin.Image_URL, CorkBoard.Title, User.name
+    (SELECT PushPin.pushPinID, PushPin.Description, PushPin.Image_URL, CorkBoard.Title, User.name
     FROM PushPin, CorkBoard, User
-    WHERE PushPin.description LIKE '%""" + search_item + """%' and PushPin.corkBoardID = CorkBoard.corkBoardID and CorkBoard.email = User.email and PushPin.corkBoardID not in (SELECT corkBoardID from PrivateCorkboard)
+    WHERE PushPin.description LIKE '%""" + search_item + """%' and PushPin.corkBoardID = CorkBoard.corkBoardID and CorkBoard.email = User.email and PushPin.corkBoardID not in (SELECT corkBoardID from PrivateCorkboard))
     Union
-    SELECT pushPin.pushPinID, PushPin.Description, PushPin.Image_URL, CorkBoard.Title, User.name
+    (SELECT PushPin.pushPinID, PushPin.Description, PushPin.Image_URL, CorkBoard.Title, User.name
     FROM Tag, PushPin, CorkBoard, User
-    WHERE Tag.tag LIKE '%""" + search_item + """%' and Tag.pushPinID = PushPin.pushPinID and PushPin.corkBoardID = CorkBoard.corkBoardID and CorkBoard.email = User.email and PushPin.corkBoardID not in (SELECT corkBoardID from PrivateCorkboard)
+    WHERE Tag.tag LIKE '%""" + search_item + """%' and Tag.pushPinID = PushPin.pushPinID and PushPin.corkBoardID = CorkBoard.corkBoardID and CorkBoard.email = User.email and PushPin.corkBoardID not in (SELECT corkBoardID from PrivateCorkboard))) Result
+    ORDER BY Result.Description
     """
     sql1 = text(search_query)
     result1 = db.engine.execute(sql1)
