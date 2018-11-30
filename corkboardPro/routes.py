@@ -60,6 +60,7 @@ def home_screen():
     my_info = []
     for row in result2:
         my_info.append(row)
+    # pdb.set_trace()
     return render_template('home_screen.html', current_user=current_user, recent_info=recent_info, my_info=my_info)
 
 
