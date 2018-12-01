@@ -14,7 +14,7 @@
                 {% endif %}
             </h2>
             </h4>
-            <p class="text-secondary"> Pinned {{pushpin.pinned_time}} on<a href="{{ url_for('corkboards', corkboard_id=corkboard.corkBoardID) }}"> {{corkboard.title}} </a> </p>
+            <p class="text-secondary"> Pinned by {{owner.name}} on {{pushpin.pinned_time}} <a href="{{ url_for('corkboards', corkboard_id=corkboard.corkBoardID) }}"> {{corkboard.title}} </a> </p>
 
         </div>
 
