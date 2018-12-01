@@ -27,12 +27,7 @@
                 </a>
                 {% endif %}
         </div>
-        {% if corkboard.last_update==None %}
-            <p class="text-secondary"> Updated by {{owner.name}} </p>
-
-        {% else %}
-            <p class="text-secondary"> Updated by {{owner.name}} on {{corkboard.last_update}}</p>
-        {% endif  %}
+        <p class="text-secondary"> Last Updated {{corkboard.last_update}}</p>
 
         <div class="row">
         {% for pushpin in pushpins %}
